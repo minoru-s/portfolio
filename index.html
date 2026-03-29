@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="ja" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome for Icons -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'Noto Sans JP', 'sans-serif'],
+                    },
+                    colors: {
+                        appleDark: '#1d1d1f',
+                        appleGray: '#86868b',
+                        appleBlue: '#0066cc',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Custom Styles -->
+    <style>
+        body {
+            background-color: #f5f5f7;
+            color: #1d1d1f;
+            overflow-x: hidden;
+            width: 100%;
+        }
+
+        /* 背景メッシュグラデーション */
+        .bg-mesh {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+            background: #f5f5f7;
+        }
+        
+        .blob {
+            position: absolute;
+            filter: blur(90px);
+            opacity: 0.6;
+            animation: float 20s infinite alternate ease-in-out;
+            border-radius: 50%;
+        }
+        
+        .blob-1 { top: -10%; left: -10%; width: 50vw; height: 50vw; background: #ffb6ff; }
+        .blob-2 { bottom: -20%; right: -10%; width: 60vw; height: 60vw; background: #b6d8ff; animation-delay: -5s; }
+        .blob-3 { top: 40%; left: 30%; width: 40vw; height: 40vw; background: #e0c3fc; animation-delay: -10s; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(8%, 12%) scale(1.15); }
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.45);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+            border-radius: 1.5rem;
+        }
+
+        .glass-nav {
+            background: rgba(255, 255, 255, 0.5);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+        }
+
+        .glass-button {
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #1d1d1f 0%, #434344 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .fade-in-section {
+            opacity: 0;
+            transform: translateY(30px);
+            visibility: hidden;
+            transition: opacity 1s cubic-bezier(0.16, 1, 0.3, 1), transform 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-in-section.is-visible {
+            opacity: 1;
+            transform: none;
+            visibility: visible;
+        }
+
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
+
+        /* モーダル表示時の背景固定とガタつき防止 */
+        body.modal-open {
+            overflow: hidden;
+            padding-right: var(--scrollbar-width, 0px);
+        }
+        
+        /* nav-container の元の px-4(1rem) にスクロールバー幅を足す */
+        body.modal-open #nav-container {
+            padding-right: calc(1rem + var(--scrollbar-width, 0px));
+        }
+
+        /* 独自スクロールバー（更新履歴用） */
+        .custom-scroll::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scroll::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.02);
+            border-radius: 8px;
+        }
+        .custom-scroll::-webkit-scrollbar-thumb {
+            background: rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body class="antialiased selection:bg-appleBlue selection:text-white relative">
+
+    <div class="bg-mesh">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Navigation -->
+    <!-- メニューのガタつきを防ぐため、コンテナからtransitionを外しレイアウトシフトを防止 -->
+    <div id="nav-container" class="fixed w-full left-0 z-50 top-4 px-4 flex justify-center pointer-events-none">
+        <nav id="navbar" class="glass-nav rounded-full py-3 px-6 md:px-8 w-full max-w-5xl flex justify-between items-center pointer-events-auto">
+            <a href="#" class="text-xl font-bold tracking-tight text-appleDark" id="nav-logo">Portfolio.</a>
+            
+            <div class="hidden md:flex space-x-6 lg:space-x-8 text-sm font-medium text-appleDark">
+                <a href="#about" class="hover:text-appleBlue transition-colors">About</a>
+                <a href="#skills" class="hover:text-appleBlue transition-colors">Skills</a>
+                <a href="#projects" class="hover:text-appleBlue transition-colors">Projects</a>
+                <a href="#achievements" class="hover:text-appleBlue transition-colors">Achievements</a>
+                <a href="#experience" class="hover:text-appleBlue transition-colors">Experience</a>
+                <a href="#contact" class="hover:text-appleBlue transition-colors">Contact</a>
+            </div>
+
+            <button id="mobile-menu-btn" class="md:hidden text-2xl text-appleDark focus:outline-none">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+        </nav>
+    </div>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 hidden flex-col items-center justify-center space-y-8 text-xl font-medium pt-16 glass-panel rounded-none">
+        <a href="#about" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">About</a>
+        <a href="#skills" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Skills</a>
+        <a href="#projects" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Projects</a>
+        <a href="#achievements" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Achievements</a>
+        <a href="#experience" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Experience</a>
+        <a href="#contact" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Contact</a>
+    </div>
+
+    <main class="relative z-10 pt-32 pb-20 px-6 md:px-12 lg:px-24">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-[80vh] flex items-center justify-center max-w-6xl mx-auto mb-32">
+            <div class="w-full grid md:grid-cols-2 gap-12 items-center fade-in-section">
+                <div class="space-y-6 order-2 md:order-1 text-center md:text-left">
+                    <p class="text-appleBlue font-semibold tracking-wide text-sm" id="hero-greeting"></p>
+                    <h1 class="flex flex-col gap-2 pb-2">
+                        <span class="text-5xl md:text-6xl lg:text-7xl font-bold tracking-tight text-gradient" id="hero-name"></span>
+                        <span class="text-2xl md:text-3xl font-medium text-appleGray tracking-normal" id="hero-en-name"></span>
+                    </h1>
+                    <h2 class="text-xl md:text-2xl text-appleGray font-medium" id="hero-title"></h2>
+                    <p class="text-appleDark/80 leading-relaxed max-w-lg mx-auto md:mx-0 text-lg" id="hero-description"></p>
+                    <div class="flex flex-wrap justify-center md:justify-start gap-4 pt-6" id="hero-actions"></div>
+                </div>
+                <div class="order-1 md:order-2 flex justify-center">
+                    <div class="relative w-64 h-64 md:w-80 md:h-80 rounded-[2.5rem] overflow-hidden glass-panel p-2 transform rotate-3 hover:rotate-0 transition-all duration-500">
+                        <img id="hero-image" src="" alt="Profile Picture" class="w-full h-full object-cover rounded-[2rem]">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="max-w-4xl mx-auto mb-32 fade-in-section">
+            <h2 class="text-3xl font-bold mb-2 text-appleDark tracking-tight">About Me</h2>
+            <div class="w-12 h-1 bg-appleBlue rounded-full mb-8"></div>
+            <div class="glass-panel p-8 md:p-10 text-appleDark/90 leading-relaxed text-lg" id="about-content"></div>
+        </section>
+
+        <!-- Skills Section -->
+        <section id="skills" class="max-w-6xl mx-auto mb-32 fade-in-section">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+                <div>
+                    <h2 class="text-3xl font-bold mb-2 text-appleDark tracking-tight">Skills</h2>
+                    <div class="w-12 h-1 bg-appleBlue rounded-full"></div>
+                </div>
+                <div class="flex flex-wrap gap-4 text-xs font-medium text-appleDark/80 glass-button px-5 py-2.5 rounded-full">
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-appleBlue/20 border border-appleBlue/30"></div>Advanced</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-appleBlue/5 border border-appleBlue/10"></div>Intermediate</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-white/30 border border-white/40"></div>Basic</div>
+                </div>
+            </div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8" id="skills-container"></div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="max-w-6xl mx-auto mb-32 fade-in-section">
+            <h2 class="text-3xl font-bold mb-2 text-appleDark tracking-tight">Featured Projects</h2>
+            <div class="w-12 h-1 bg-appleBlue rounded-full mb-8"></div>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-container"></div>
+        </section>
+
+        <!-- Achievements Section -->
+        <section id="achievements" class="max-w-6xl mx-auto mb-32 fade-in-section">
+            <h2 class="text-3xl font-bold mb-2 text-appleDark tracking-tight">Achievements</h2>
+            <div class="w-12 h-1 bg-appleBlue rounded-full mb-8"></div>
+            <div class="grid md:grid-cols-2 gap-6" id="achievements-container"></div>
+        </section>
+
+        <!-- Experience Section -->
+        <section id="experience" class="max-w-4xl mx-auto mb-32 fade-in-section">
+            <h2 class="text-3xl font-bold mb-2 text-appleDark tracking-tight">Experience & Education</h2>
+            <div class="w-12 h-1 bg-appleBlue rounded-full mb-10"></div>
+            <div class="space-y-10 border-l-2 border-appleBlue/20 ml-3 md:ml-6 relative pb-6" id="timeline-container"></div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="max-w-3xl mx-auto mb-20 fade-in-section text-center">
+            <div class="glass-panel p-12 flex flex-col items-center">
+                <h2 class="text-3xl font-bold mb-6 text-appleDark tracking-tight">Get In Touch</h2>
+                <p class="text-appleDark/80 mb-10 text-lg max-w-lg" id="contact-text"></p>
+                <a id="contact-email-btn" href="" class="inline-flex items-center justify-center px-8 py-4 text-base font-medium rounded-full text-white bg-appleDark hover:bg-black transition-all shadow-lg hover:shadow-xl hover:-translate-y-1">
+                    <i class="fa-regular fa-envelope mr-2"></i> メールを送る
+                </a>
+                <div class="mt-12 flex justify-center space-x-6" id="social-links"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="relative z-10 pb-8 text-center text-sm text-appleGray">
+        <p>&copy; <span id="current-year"></span> <span id="footer-name"></span>. All rights reserved.</p>
+    </footer>
+
+    <!-- Universal Detail Modal (実績・プロジェクト共通) -->
+    <div id="detail-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 sm:p-6 bg-appleDark/40 backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" style="background: rgba(255, 255, 255, 0.96);" id="modal-content-box">
+            <div class="flex justify-between items-start p-6 sm:p-8 border-b border-black/5 shrink-0">
+                <div class="pr-4">
+                    <span id="modal-date" class="hidden px-2.5 py-1 bg-appleDark text-white text-[11px] font-bold rounded-md tracking-wider mb-3"></span>
+                    <h3 id="modal-title" class="text-2xl sm:text-3xl font-bold text-appleDark leading-tight"></h3>
+                </div>
+                <button id="modal-close" class="w-10 h-10 flex items-center justify-center glass-button rounded-full text-appleDark hover:text-appleBlue hover:scale-110 transition-all shrink-0">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 sm:p-8 overflow-y-auto custom-scroll" id="modal-body"></div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         データ定義セクション
+         ========================================== -->
+    <script>
+        const portfolioData = {
+            profile: {
+                name: "西藤 実",
+                englishName: "Minoru SAITO",
+                firstName: "Minoru",
+                greeting: "Hello, I'm",
+                title: "東京科学大学大学院 修士1年",
+                description: "好奇心の赴くままに幅広い技術に触れ、モノづくりを楽しんできました。未知の領域にも積極的に飛び込み、新しい価値を創造できる人を目指しています。",
+                image: "img/me.jpg", 
+                email: "saito.minoru.info@gmail.com",
+            },
+            about: `
+                <div class="space-y-4 mb-8">
+                    <p>プログラミングから動画編集、3D CAD、グラフィックデザインに至るまで、PCを活用した幅広いモノづくりに取り組んできました。自分の作ったものが誰かの役に立つことに、大きなやりがいを感じます。</p>
+                    <p>「迷ったら、勇気がいる方を選ぶ。」を座右の銘として、日々さまざまなことに挑戦しています。</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-black/5">
+                    <div class="flex items-center text-appleDark/80">
+                        <div class="w-8 text-center text-appleBlue"><i class="fa-solid fa-location-dot"></i></div>
+                        <span class="text-sm font-medium">三重県出身</span>
+                    </div>
+                    <div class="flex items-center text-appleDark/80">
+                        <div class="w-8 text-center text-appleBlue"><i class="fa-solid fa-language"></i></div>
+                        <span class="text-sm font-medium">TOEIC L&R 835点（2025年2月取得）</span>
+                    </div>
+                    <div class="flex items-center text-appleDark/80">
+                        <div class="w-8 text-center text-appleBlue"><i class="fa-solid fa-graduation-cap"></i></div>
+                        <span class="text-sm font-medium">東京科学大学大学院 在籍中</span>
+                    </div>
+                    <div class="flex items-center text-appleDark/80">
+                        <div class="w-8 text-center text-appleBlue"><i class="fa-solid fa-laptop-code"></i></div>
+                        <span class="text-sm font-medium">ソフトウェア / ハードウェア / 映像 / デザイン</span>
+                    </div>
+                </div>
+            `,
+            skills: [
+                {
+                    category: "Programming",
+                    icon: "fa-solid fa-code",
+                    items: [
+                        { name: "HTML / CSS", level: 3 },
+                        { name: "Python", level: 2, note: "pandas, NumPy, matplotlib" },
+                        { name: "C", level: 2 },
+                        { name: "C#", level: 2 },
+                        { name: "R", level: 2 },
+                        { name: "MATLAB", level: 1 },
+                        { name: "Ruby", level: 1, note: "基礎" }
+                    ]
+                },
+                {
+                    category: "Hardware & IoT",
+                    icon: "fa-solid fa-microchip",
+                    items: [
+                        { name: "Arduino", level: 3 },
+                        { name: "Raspberry Pi", level: 2 }
+                    ]
+                },
+                {
+                    category: "Creative & Modeling",
+                    icon: "fa-solid fa-cube",
+                    items: [
+                        { name: "Final Cut Pro X", level: 3, note: "動画編集 歴10年" },
+                        { name: "Adobe Illustrator", level: 2 },
+                        { name: "Autodesk Fusion", level: 2 },
+                        { name: "Unity", level: 2 }
+                    ]
+                },
+                {
+                    category: "Tools & OS",
+                    icon: "fa-solid fa-toolbox",
+                    items: [
+                        { name: "LaTeX", level: 3 },
+                        { name: "Git / GitHub", level: 2 },
+                        { name: "macOS", level: 3, note: "メイン環境" },
+                        { name: "Windows", level: 2, note: "時々使用" },
+                        { name: "Linux", level: 1, note: "たまに使用" }
+                    ]
+                }
+            ],
+            projects: [
+                {
+                    title: "Mocap Plus",
+                    description: "モーションキャプチャの出力データを添付するだけでさまざまな解析が行えるアプリ。",
+                    details: `
+                        <p class="mb-4">OptiTrackの解析ソフトMotiveからエクスポートされたCSVファイルに最適化された、ブラウザ完結型のモーションキャプチャデータ解析アプリケーションです。</p>
+                        <p class="mb-4">データをアップロードするだけで、軌跡の可視化や各種データ処理を外部に送信することなく安全かつ手軽に行うことができます。開発にあたっては、GeminiやClaude、ChatGPTなど複数のLLMを活用して効率的に実装を進めました。</p>
+                        
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">主な機能</h4>
+                        <ul class="space-y-4 text-sm text-appleDark/80 bg-black/5 p-5 rounded-xl border border-black/10">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-chart-line text-appleBlue mt-0.5 mr-3 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <strong class="text-appleDark block mb-1">広域解析ツール</strong>
+                                    軌跡、ヒートマップ、網羅率の可視化に対応。Z軸の反転や細やかなダウンサンプリングなど、柔軟な表示設定が可能です。
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-filter text-appleBlue mt-0.5 mr-3 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <strong class="text-appleDark block mb-1">データ解析および処理ツール</strong>
+                                    ユーザーが任意に設定できるローパスフィルタやガウシアンフィルタの適用、動作区間の自動検出、データの分散表示やグラフの拡大縮小機能を提供します。
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-scissors text-appleBlue mt-0.5 mr-3 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <strong class="text-appleDark block mb-1">データトリミングと距離計測</strong>
+                                    任意の区間を抽出してMotive互換のCSVとして出力する機能や、指定した2点間のユークリッド距離を測定する機能を搭載しています。
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-gauge-high text-appleBlue mt-0.5 mr-3 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <strong class="text-appleDark block mb-1">基準速度算出ツール</strong>
+                                    クォータニオン形式のエクスポートデータにも対応したトラッキングと速度算出が行えます。
+                                </div>
+                            </li>
+                        </ul>
+                    `,
+                    image: "img/mocap.png",
+                    techStack: ["HTML", "CSS", "複数のLLM"],
+                    links: [
+                        { type: "github", url: "https://github.com/minoru-s/mocap", icon: "fa-brands fa-github" },
+                        { type: "demo", url: "https://minoru-s.github.io/mocap/", icon: "fa-solid fa-arrow-up-right-from-square" }
+                    ]
+                },
+                {
+                    title: "映像・動画制作など",
+                    description: "個人や団体からの依頼を中心に、これまで50本以上の映像作品を制作。撮影から編集まで幅広く担当しています。",
+                    details: `
+                        <p class="mb-4">これまで50本以上の映像作品を制作してきました。その大半が個人または団体からの依頼による制作のため一般公開は控えていますが、対面にてお見せすることが可能です。</p>
+                        
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">オンラインで視聴可能な過去作品</h4>
+                        <ul class="space-y-3 mb-8">
+                            <li>
+                                <a href="https://www.instagram.com/reel/C6y7a6ZSHWw/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-start group">
+                                    <i class="fa-brands fa-instagram mt-1 mr-3 w-4 text-center group-hover:scale-110 transition-transform"></i>
+                                    <span>山岳部 紹介ムービー<br><span class="text-xs text-appleGray">大学2年 / 編集</span></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://youtu.be/9TBJcdXb30c?si=WsEcUUXjA_TiGGv3" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-start group">
+                                    <i class="fa-brands fa-youtube mt-1 mr-3 w-4 text-center group-hover:scale-110 transition-transform"></i>
+                                    <span>海陽学園音楽部 第6回 定期演奏会<br><span class="text-xs text-appleGray">高校2年 / 撮影および編集</span></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://youtu.be/55SkBS51Jrw?si=1qUItsyqxJj0F9aB" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-start group">
+                                    <i class="fa-brands fa-youtube mt-1 mr-3 w-4 text-center group-hover:scale-110 transition-transform"></i>
+                                    <span>海陽学園2019年度 スポーツフェスタ予告映像<br><span class="text-xs text-appleGray">高校1年 / 撮影および編集</span></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/watch?v=44hCbOIXLqs" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-start group">
+                                    <i class="fa-brands fa-youtube mt-1 mr-3 w-4 text-center group-hover:scale-110 transition-transform"></i>
+                                    <span>海陽学園 海陽祭2016 ダイジェスト映像<br><span class="text-xs text-appleGray">中学1年 / 編集</span></span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <h4 class="font-bold text-appleDark mb-2">その他の制作ジャンル</h4>
+                        <p class="text-sm text-appleDark/80 leading-relaxed bg-black/5 p-4 rounded-lg border border-black/10">
+                            学園祭公式記録映像、体育祭公式記録映像（DVD販売）、バラエティ番組風映像、ドッキリ番組風映像、お別れ会用スライドショーなど
+                        </p>
+                    `,
+                    image: "img/fcpx.png",
+                    techStack: ["Final Cut Pro X", "撮影", "映像編集"],
+                    links: []
+                },
+                {
+                    title: "個人ポートフォリオサイト",
+                    description: "就職活動を機に作成したポートフォリオサイト。Liquid Glassのようなデザインを採用し、モダンなUIを構築しました。",
+                    image: "img/pf.png",
+                    techStack: ["HTML", "CSS", "JavaScript", "Tailwind CSS"],
+                    links: [
+                        { type: "github", url: "https://github.com/minoru-s", icon: "fa-brands fa-github" },
+                        { type: "demo", url: "#", icon: "fa-solid fa-arrow-up-right-from-square" }
+                    ]
+                }
+            ],
+            achievements: [
+                {
+                    title: "NHK BS番組にて研究内容が紹介",
+                    date: "2026年1月",
+                    summary: "JAXA等と共同開発中の月面探査ロボットの研究について取材を受け、番組内で放送されました。",
+                    description: `
+                        <p class="mb-4">現在携わっている、月にあるとされる溶岩洞窟の探査を目標とした小型群ロボットの研究について、NHK BSの取材を受けました。番組内では、研究内容の紹介とともに、私が解析を担当したデータも放送されました。</p>
+                        <p class="mb-4">本プロジェクトはJAXAや産業技術総合研究所などと共同で進めており、近い将来、私が研究開発に携わったロボットが月に降り立つことを目指して日々研究に励んでいます。</p>
+                        <div class="mt-8 mb-2">
+                            <a href="https://www.web.nhk/tv/an/frontiers/pl/series-tep-PM34JL2L14/ep/JZ37MV76G5" target="_blank" rel="noopener noreferrer" class="block group">
+                                <div class="flex flex-col sm:flex-row bg-white rounded-xl overflow-hidden border border-black/10 hover:shadow-md transition-shadow">
+                                    <div class="sm:w-1/3 bg-gray-100 flex items-center justify-center shrink-0 h-32 sm:h-auto">
+                                        <img src="https://imgu.web.nhk/static/assets/images/tvepisode/te/JZ37MV76G5/JZ37MV76G5-eyecatch_4c37bbd521090ab62701047e74977cef.jpg" alt="番組サムネイル" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    </div>
+                                    <div class="p-4 sm:p-5 flex flex-col justify-center flex-grow">
+                                        <div class="text-[11px] font-bold text-appleGray mb-1">NHK BSプレミアム4K</div>
+                                        <h4 class="font-bold text-appleDark text-sm sm:text-base leading-tight mb-2 group-hover:text-appleBlue transition-colors">日本発 月面ロボット最前線</h4>
+                                        <div class="text-xs text-appleDark/70 mt-auto flex items-center pt-2">
+                                            <i class="fa-regular fa-calendar mr-1.5"></i>初回放送：2026年1月26日 午後10:00
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    `
+                },
+                {
+                    title: "日豪共同 実証実験への参加",
+                    date: "2025年11月",
+                    summary: "オーストラリアの洞窟にて実証実験に参加し、各研究機関の公式Webサイトに掲載されました。",
+                    description: `
+                        <p class="mb-4">研究プロジェクトの一環として、オーストラリアでの洞窟実験に参加しました。この実験の様子は、オーストラリアの国立研究機関であるCSIROやJAXAをはじめ、複数の研究機関のWebサイトで紹介されています。</p>
+                        <p class="mb-4">私が定点映像からヒートマップ解析を実施したデータがJAXAの記事にスクリーンショットとして掲載されたほか、CSIROの記事では実名入りで紹介していただきました。</p>
+                        <div class="grid sm:grid-cols-2 gap-4 mt-6 mb-8">
+                            <div>
+                                <img src="https://www.isas.jaxa.jp/topics/files/20260319_3.png" alt="解析データ" class="w-full rounded-lg border border-black/10 object-cover aspect-video">
+                                <p class="text-xs text-appleGray mt-2 text-center">私が定点映像から<br>ヒートマップ解析を実施したもの</p>
+                            </div>
+                            <div>
+                                <img src="https://research.csiro.au/robotics/wp-content/uploads/sites/592/2026/03/japan-australia-field-trials-group-hi-1536x1025.jpg" alt="チーム写真" class="w-full rounded-lg border border-black/10 object-cover aspect-video">
+                                <p class="text-xs text-appleGray mt-2 text-center">オーストラリア・日本の共同研究チーム<br>&copy; CSIRO, Katrina Lo Surdo</p>
+                            </div>
+                        </div>
+                        <div class="p-4 sm:p-5 bg-black/5 rounded-lg border border-black/10">
+                            <h4 class="font-bold text-appleDark mb-3 text-sm">関連掲載記事</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li><a href="https://research.csiro.au/robotics/csiro-japan-collaboration-advances-lunar-cave-robotics/" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>CSIRO 公式サイト</a></li>
+                                <li><a href="https://www.isas.jaxa.jp/topics/004219.html" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>JAXA 公式サイト</a></li>
+                                <li><a href="https://www.chuo-u.ac.jp/research/news/2026/03/84967/" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>中央大学 公式サイト</a></li>
+                                <li><a href="https://www.tuat.ac.jp/NEWS/research/20260319_01.html" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>東京農工大学 公式サイト</a></li>
+                                <li><a href="https://moonshot.r.chuo-u.ac.jp/kunii/report/912/" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>ムーンショット型研究開発事業</a></li>
+                            </ul>
+                        </div>
+                    `
+                },
+                {
+                    title: "理工学部長賞 受賞",
+                    date: "2025年5月",
+                    summary: "学業および課外活動の評価により、約1000名の中から3名の給付型奨学金受給者に選出。",
+                    description: `<p class="mb-4">中央大学理工学部4年次に、同期約1000人の中から学業や課外活動などの多面的な評価を受け、3名のみが選ばれる給付型奨学金である理工学部長賞に選出されました。</p>`
+                }
+            ],
+            timeline: [
+                {
+                    year: "2016年4月 - 2022年3月",
+                    title: "海陽中等教育学校",
+                    subtitle: "",
+                    description: "愛知県蒲郡市に位置する全寮制中高一貫校。部活動では映像部に所属し、公式記録動画やイベント用ムービーを多数制作。学園祭パンフレットや生徒会誌のデザインも担当。この時期に独学でHTMLやCSSの学習を開始。"
+                },
+                {
+                    year: "2022年4月 - 2026年3月",
+                    title: "中央大学",
+                    subtitle: "理工学部 電気電子情報通信工学科",
+                    description: "電気、電子、情報通信の分野を幅広く学ぶ。JAXA、産総研、東京農工大などと共同で月面探査ロボットの研究開発を行う研究室に所属し、シミュレーションやJAXA探査実験棟での実証に従事。2025年11月にはオーストラリアでの海外実験にも参加した。"
+                },
+                {
+                    year: "2022年9月 - 2026年2月",
+                    title: "大手プログラミングスクール",
+                    subtitle: "アルバイト講師",
+                    description: "3年半にわたり、対面およびオンラインで小学生から高校生までを対象にプログラミングを指導。主にUnity+C#、Python、Scratchを担当した。"
+                },
+                {
+                    year: "2026年4月 - 2028年3月予定",
+                    title: "東京科学大学大学院",
+                    subtitle: "理工学系 工学院 情報通信系",
+                    description: "大学院へ進学し、ハプティクスの研究に従事する予定。"
+                }
+            ],
+            socials: [
+                { name: "GitHub", url: "https://github.com/minoru-s", icon: "fa-brands fa-github" },
+                { name: "LinkedIn", url: "https://www.linkedin.com/in/minoru-s/", icon: "fa-brands fa-linkedin-in" },
+                { name: "Facebook", url: "https://www.facebook.com/SAITOMlNORU", icon: "fa-brands fa-facebook" }
+            ],
+            contactText: "私のポートフォリオをご覧いただきありがとうございます。ご連絡は、以下のボタンからメールにてお願いいたします。"
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // 基本情報
+            document.title = `Portfolio | ${portfolioData.profile.name}`;
+            document.getElementById('nav-logo').textContent = `${portfolioData.profile.firstName}.`;
+            document.getElementById('hero-greeting').textContent = portfolioData.profile.greeting;
+            document.getElementById('hero-name').textContent = portfolioData.profile.name;
+            document.getElementById('hero-en-name').textContent = portfolioData.profile.englishName;
+            document.getElementById('hero-title').textContent = portfolioData.profile.title;
+            document.getElementById('hero-description').textContent = portfolioData.profile.description;
+            document.getElementById('hero-image').src = portfolioData.profile.image;
+            document.getElementById('footer-name').textContent = portfolioData.profile.name;
+            document.getElementById('current-year').textContent = new Date().getFullYear();
+            document.getElementById('hero-actions').innerHTML = `<a href="#projects" class="px-8 py-3.5 bg-appleDark text-white font-medium rounded-full hover:bg-black transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">プロジェクトを見る</a>`;
+            document.getElementById('about-content').innerHTML = portfolioData.about;
+
+            // Skills
+            const skillsContainer = document.getElementById('skills-container');
+            const levelStyles = { 3: 'bg-appleBlue/20 border-appleBlue/30 hover:bg-appleBlue/30', 2: 'bg-appleBlue/5 border-appleBlue/10 hover:bg-appleBlue/15', 1: 'bg-white/30 border-white/40 hover:bg-white/50' };
+            portfolioData.skills.forEach(skillGroup => {
+                const itemsHtml = skillGroup.items.map(item => `<div class="p-4 rounded-xl border transition-all duration-200 ${levelStyles[item.level]}"><div class="flex items-center justify-between gap-3"><span class="text-sm font-bold text-appleDark truncate">${item.name}</span></div>${item.note ? `<div class="text-[12px] text-appleDark/60 mt-1.5 leading-tight">${item.note}</div>` : ''}</div>`).join('');
+                skillsContainer.innerHTML += `<div class="glass-panel p-6 md:p-8 flex flex-col h-full"><div class="flex items-center gap-4 mb-6"><div class="w-12 h-12 glass-button text-appleBlue rounded-2xl flex items-center justify-center text-xl shadow-sm shrink-0"><i class="${skillGroup.icon}"></i></div><h3 class="text-xl font-bold text-appleDark">${skillGroup.category}</h3></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow content-start">${itemsHtml}</div></div>`;
+            });
+
+            // Projects (クリックでモーダルを開く仕様に変更)
+            const projectsContainer = document.getElementById('projects-container');
+            portfolioData.projects.forEach((project, index) => {
+                const techTags = project.techStack.map(tech => `<span class="text-xs font-semibold text-appleDark/80 bg-black/5 px-2.5 py-1 rounded-md border border-black/5">${tech}</span>`).join('');
+                const links = project.links.map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 flex items-center justify-center glass-button rounded-full text-appleDark hover:text-appleBlue hover:scale-105 transition-all relative z-10" aria-label="${link.type}"><i class="${link.icon}"></i></a>`).join('');
+                
+                projectsContainer.innerHTML += `
+                    <div class="glass-panel p-2 flex flex-col group cursor-pointer hover:-translate-y-2 hover:shadow-xl transition-all duration-300" data-project-index="${index}">
+                        <div class="relative h-48 md:h-56 overflow-hidden rounded-[1.2rem] border border-black/5">
+                            <img src="${project.image}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                        </div>
+                        <div class="p-6 flex-grow flex flex-col">
+                            <h3 class="text-xl font-bold mb-3 text-appleDark flex justify-between items-start gap-2">
+                                <span>${project.title}</span>
+                                <i class="fa-solid fa-arrow-right -rotate-45 text-sm text-appleBlue opacity-0 group-hover:opacity-100 transition-opacity mt-1 shrink-0"></i>
+                            </h3>
+                            <p class="text-appleDark/80 text-sm mb-5 flex-grow leading-relaxed">${project.description}</p>
+                            <div class="flex flex-wrap gap-2 mb-6">${techTags}</div>
+                            <div class="flex items-center gap-3 mt-auto pt-2 border-t border-black/5">${links}</div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Achievements
+            const achievementsContainer = document.getElementById('achievements-container');
+            portfolioData.achievements.forEach((ach, index) => {
+                achievementsContainer.innerHTML += `<div class="glass-panel p-6 sm:p-8 hover:-translate-y-1 hover:shadow-lg hover:bg-white/60 transition-all duration-300 cursor-pointer group flex flex-col h-full" data-achievement-index="${index}"><div class="flex items-start gap-4 sm:gap-6"><div class="flex items-center justify-center w-12 h-12 rounded-full glass-button text-appleBlue shrink-0 group-hover:scale-110 transition-transform"><i class="fa-solid fa-award text-lg"></i></div><div class="flex-grow"><span class="inline-block px-2.5 py-1 bg-appleDark text-white text-[10px] font-bold rounded-md tracking-wider mb-3">${ach.date}</span><h3 class="text-lg sm:text-xl font-bold text-appleDark mb-2 leading-tight group-hover:text-appleBlue transition-colors">${ach.title}</h3><p class="text-sm text-appleDark/70 leading-relaxed">${ach.summary}</p></div><div class="shrink-0 text-appleGray/40 group-hover:text-appleBlue transition-colors mt-1"><i class="fa-solid fa-arrow-right -rotate-45"></i></div></div></div>`;
+            });
+
+            // Modal System
+            const modal = document.getElementById('detail-modal');
+            const modalContentBox = document.getElementById('modal-content-box');
+            const modalCloseBtn = document.getElementById('modal-close');
+            const navContainer = document.getElementById('nav-container');
+            
+            const updateScrollbarWidth = () => {
+                const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+                document.documentElement.style.setProperty('--scrollbar-width', `${scrollbarWidth}px`);
+            };
+            
+            updateScrollbarWidth();
+            window.addEventListener('resize', updateScrollbarWidth);
+
+            // 汎用モーダル展開関数
+            const openModal = (title, date, bodyHtml) => {
+                updateScrollbarWidth();
+                
+                document.getElementById('modal-title').textContent = title;
+                const dateEl = document.getElementById('modal-date');
+                if (date) {
+                    dateEl.textContent = date;
+                    dateEl.classList.remove('hidden');
+                    dateEl.classList.add('inline-block');
+                } else {
+                    dateEl.classList.add('hidden');
+                    dateEl.classList.remove('inline-block');
+                }
+                
+                document.getElementById('modal-body').innerHTML = `<div class="text-appleDark/80 leading-relaxed space-y-4 text-[15px] sm:text-base">${bodyHtml}</div>`;
+                
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.classList.add('modal-open');
+
+                setTimeout(() => {
+                    modal.classList.remove('opacity-0');
+                    modalContentBox.classList.remove('scale-95');
+                    modalContentBox.classList.add('scale-100');
+                }, 10);
+            };
+
+            // Achievementsのクリックイベント
+            achievementsContainer.addEventListener('click', (e) => {
+                const card = e.target.closest('[data-achievement-index]');
+                if (!card) return;
+                const index = card.getAttribute('data-achievement-index');
+                const ach = portfolioData.achievements[index];
+                openModal(ach.title, ach.date, ach.description);
+            });
+
+            // Projectsのクリックイベント
+            projectsContainer.addEventListener('click', (e) => {
+                // aタグ（外部へのリンクボタン）がクリックされた場合はモーダルを開かず通常遷移させる
+                if (e.target.closest('a')) return;
+                
+                const card = e.target.closest('[data-project-index]');
+                if (!card) return;
+                const index = card.getAttribute('data-project-index');
+                const proj = portfolioData.projects[index];
+                
+                let contentHtml = proj.details || `<p>${proj.description}</p>`;
+                
+                // プロジェクトにリンク情報がある場合、モーダル下部にもボタンとして表示
+                if (proj.links && proj.links.length > 0) {
+                    const linkButtons = proj.links.map(link => {
+                        let text = 'リンク';
+                        if (link.type === 'github') text = 'GitHubで見る';
+                        else if (link.type === 'demo') text = 'アプリを開く';
+                        
+                        return `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-2.5 bg-appleDark text-white hover:bg-black rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"><i class="${link.icon} mr-2"></i>${text}</a>`;
+                    }).join('');
+                    
+                    contentHtml += `<div class="mt-8 pt-6 border-t border-black/10 flex flex-wrap gap-4">${linkButtons}</div>`;
+                }
+
+                openModal(proj.title, null, contentHtml);
+            });
+
+            const closeModal = () => {
+                modal.classList.add('opacity-0');
+                modalContentBox.classList.remove('scale-100');
+                modalContentBox.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    document.body.classList.remove('modal-open');
+                }, 300);
+            };
+
+            modalCloseBtn.addEventListener('click', closeModal);
+            modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+            // Timeline
+            const timelineContainer = document.getElementById('timeline-container');
+            portfolioData.timeline.forEach((item) => {
+                timelineContainer.innerHTML += `<div class="relative pl-6 md:pl-10 group"><div class="absolute left-[-13px] top-8 w-6 h-6 glass-button rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 z-10"><div class="w-2.5 h-2.5 bg-appleBlue rounded-full"></div></div><div class="glass-panel p-6 md:p-8 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:bg-white/40"><div class="flex flex-col md:flex-row md:items-center gap-3 mb-4"><span class="inline-block px-3 py-1 bg-appleDark text-white text-xs font-bold rounded-md tracking-wider w-fit">${item.year}</span><h3 class="text-xl font-bold text-appleDark">${item.title}</h3></div>${item.subtitle ? `<h4 class="text-md font-semibold text-appleGray mb-3">${item.subtitle}</h4>` : ''}<p class="text-appleDark/80 text-sm leading-relaxed">${item.description}</p></div></div>`;
+            });
+            timelineContainer.innerHTML += `<svg class="absolute top-full left-[-9px] w-[16px] h-[14px] text-appleBlue/20 overflow-visible !mt-0" viewBox="0 0 16 14" fill="none"><line x1="8" y1="0" x2="8" y2="12" stroke="currentColor" stroke-width="2" /><path d="M2 6 L8 12 L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>`;
+
+            // Contact
+            document.getElementById('contact-text').textContent = portfolioData.contactText;
+            document.getElementById('contact-email-btn').href = `mailto:${portfolioData.profile.email}`;
+            const socialLinksContainer = document.getElementById('social-links');
+            portfolioData.socials.forEach(social => { socialLinksContainer.innerHTML += `<a href="${social.url}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 flex items-center justify-center rounded-full glass-button text-appleDark hover:text-appleBlue hover:scale-110 transition-all" aria-label="${social.name}"><i class="${social.icon} text-xl"></i></a>`; });
+
+            // Menu Toggle
+            const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const menuIcon = mobileMenuBtn.querySelector('i');
+            function toggleMenu() {
+                mobileMenu.classList.toggle('hidden');
+                mobileMenu.classList.toggle('flex');
+                if (mobileMenu.classList.contains('hidden')) {
+                    menuIcon.classList.replace('fa-xmark', 'fa-bars');
+                    document.body.style.overflow = 'auto';
+                } else {
+                    menuIcon.classList.replace('fa-bars', 'fa-xmark');
+                    document.body.style.overflow = 'hidden';
+                }
+            }
+            mobileMenuBtn.addEventListener('click', toggleMenu);
+            document.querySelectorAll('.mobile-link').forEach(link => { link.addEventListener('click', toggleMenu); });
+
+            // Observer
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => { if (entry.isIntersecting) { entry.target.classList.add('is-visible'); observer.unobserve(entry.target); } });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-in-section').forEach(section => { observer.observe(section); });
+        });
+    </script>
+</body>
+</html>
