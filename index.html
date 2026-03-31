@@ -67,29 +67,35 @@
             100% { transform: translate(8%, 12%) scale(1.15); }
         }
 
+        /* Liquid Glass デザインの強化・透け感の調整 */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.45);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
-            border: 1px solid rgba(255, 255, 255, 0.6);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.05) 100%);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-right-color: rgba(255, 255, 255, 0.2);
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
             border-radius: 1.5rem;
         }
 
         .glass-nav {
-            background: rgba(255, 255, 255, 0.5);
-            backdrop-filter: blur(20px) saturate(180%);
-            -webkit-backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.06);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.1) 100%);
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            border: 1px solid rgba(255, 255, 255, 0.7);
+            border-bottom-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 24px rgba(0, 0, 0, 0.05);
         }
 
         .glass-button {
-            background: rgba(255, 255, 255, 0.6);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.1) 100%);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
+            border-right-color: rgba(255, 255, 255, 0.3);
+            border-bottom-color: rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
         }
 
         .text-gradient {
@@ -122,7 +128,6 @@
             padding-right: var(--scrollbar-width, 0px);
         }
         
-        /* nav-container の元の px-4(1rem) にスクロールバー幅を足す */
         body.modal-open #nav-container {
             padding-right: calc(1rem + var(--scrollbar-width, 0px));
         }
@@ -150,14 +155,14 @@
     </div>
 
     <!-- Navigation -->
-    <!-- メニューのガタつきを防ぐため、コンテナからtransitionを外しレイアウトシフトを防止 -->
     <div id="nav-container" class="fixed w-full left-0 z-50 top-4 px-4 flex justify-center pointer-events-none">
         <nav id="navbar" class="glass-nav rounded-full py-3 px-6 md:px-8 w-full max-w-5xl flex justify-between items-center pointer-events-auto">
             <a href="#" class="text-xl font-bold tracking-tight text-appleDark" id="nav-logo">Portfolio.</a>
             
-            <div class="hidden md:flex space-x-6 lg:space-x-8 text-sm font-medium text-appleDark">
+            <div class="hidden md:flex space-x-5 lg:space-x-7 text-sm font-medium text-appleDark">
                 <a href="#about" class="hover:text-appleBlue transition-colors">About</a>
                 <a href="#skills" class="hover:text-appleBlue transition-colors">Skills</a>
+                <a href="#research" class="hover:text-appleBlue transition-colors">Research</a>
                 <a href="#projects" class="hover:text-appleBlue transition-colors">Projects</a>
                 <a href="#achievements" class="hover:text-appleBlue transition-colors">Achievements</a>
                 <a href="#experience" class="hover:text-appleBlue transition-colors">Experience</a>
@@ -174,6 +179,7 @@
     <div id="mobile-menu" class="fixed inset-0 z-40 hidden flex-col items-center justify-center space-y-8 text-xl font-medium pt-16 glass-panel rounded-none">
         <a href="#about" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">About</a>
         <a href="#skills" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Skills</a>
+        <a href="#research" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Research</a>
         <a href="#projects" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Projects</a>
         <a href="#achievements" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Achievements</a>
         <a href="#experience" class="mobile-link text-appleDark hover:text-appleBlue transition-colors">Experience</a>
@@ -220,10 +226,17 @@
                 <div class="flex flex-wrap gap-4 text-xs font-medium text-appleDark/80 glass-button px-5 py-2.5 rounded-full">
                     <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-appleBlue/20 border border-appleBlue/30"></div>Advanced</div>
                     <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-appleBlue/5 border border-appleBlue/10"></div>Intermediate</div>
-                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-white/30 border border-white/40"></div>Basic</div>
+                    <div class="flex items-center gap-2"><div class="w-3 h-3 rounded-full bg-white/20 border border-white/30"></div>Basic</div>
                 </div>
             </div>
             <div class="grid md:grid-cols-2 lg:grid-cols-2 gap-6 md:gap-8" id="skills-container"></div>
+        </section>
+
+        <!-- Research Section (New) -->
+        <section id="research" class="max-w-4xl mx-auto mb-32 fade-in-section">
+            <h2 class="text-3xl font-bold mb-2 text-appleDark tracking-tight">Research</h2>
+            <div class="w-12 h-1 bg-appleBlue rounded-full mb-8"></div>
+            <div class="space-y-6" id="research-container"></div>
         </section>
 
         <!-- Projects Section -->
@@ -264,12 +277,12 @@
         <p>&copy; <span id="current-year"></span> <span id="footer-name"></span>. All rights reserved.</p>
     </footer>
 
-    <!-- Universal Detail Modal (実績・プロジェクト共通) -->
+    <!-- Universal Detail Modal -->
     <div id="detail-modal" class="fixed inset-0 z-[60] hidden items-center justify-center p-4 sm:p-6 bg-appleDark/40 backdrop-blur-sm opacity-0 transition-opacity duration-300">
         <div class="glass-panel w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden transform scale-95 transition-transform duration-300" style="background: rgba(255, 255, 255, 0.96);" id="modal-content-box">
             <div class="flex justify-between items-start p-6 sm:p-8 border-b border-black/5 shrink-0">
                 <div class="pr-4">
-                    <span id="modal-date" class="hidden px-2.5 py-1 bg-appleDark text-white text-[11px] font-bold rounded-md tracking-wider mb-3"></span>
+                    <span id="modal-date" class="hidden px-2.5 py-1 bg-appleDark text-white text-[11px] font-bold rounded-md tracking-wider mb-3 shadow-sm"></span>
                     <h3 id="modal-title" class="text-2xl sm:text-3xl font-bold text-appleDark leading-tight"></h3>
                 </div>
                 <button id="modal-close" class="w-10 h-10 flex items-center justify-center glass-button rounded-full text-appleDark hover:text-appleBlue hover:scale-110 transition-all shrink-0">
@@ -280,9 +293,7 @@
         </div>
     </div>
 
-    <!-- ==========================================
-         データ定義セクション
-         ========================================== -->
+    <!-- Data & Logic -->
     <script>
         const portfolioData = {
             profile: {
@@ -298,7 +309,7 @@
             about: `
                 <div class="space-y-4 mb-8">
                     <p>プログラミングから動画編集、3D CAD、グラフィックデザインに至るまで、PCを活用した幅広いモノづくりに取り組んできました。自分の作ったものが誰かの役に立つことに、大きなやりがいを感じます。</p>
-                    <p>「迷ったら、勇気がいる方を選ぶ。」を座右の銘として、日々さまざまなことに挑戦しています。</p>
+                    <p>迷ったら、勇気がいる方を選ぶ。を座右の銘として、日々さまざまなことに挑戦しています。</p>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-black/5">
                     <div class="flex items-center text-appleDark/80">
@@ -361,6 +372,77 @@
                         { name: "Windows", level: 2, note: "時々使用" },
                         { name: "Linux", level: 1, note: "たまに使用" }
                     ]
+                }
+            ],
+            research: [
+                {
+                    period: "2025年度 - 学部4年",
+                    title: "月面探査ロボットの研究開発",
+                    organization: "中央大学 理工学部 電気電子情報通信工学科",
+                    description: "月の溶岩洞窟探査を目的とした小型群ロボットの研究開発に携わりました。JAXAや産業技術総合研究所との共同プロジェクトとして、シミュレーション環境の構築からJAXA探査実験棟での実証実験まで幅広く経験しました。オーストラリアの洞窟での実証実験にも参加し、主に群ロボットの軌跡解析やヒートマップ生成などのデータ処理を担当しました。",
+                    icon: "fa-solid fa-rocket",
+                    details: `
+                        <p class="mb-4">学部4年次は中央大学の國井研究室に所属し、月に存在するとされる溶岩洞窟の探査を目的とした、跳躍可能な小型群ロボットの研究開発を行いました。この研究はムーンショット型研究開発事業に採択されており、JAXAや産業技術総合研究所、東京農工大学などと共同で進めていたものです。</p>
+                        
+                        <div class="my-6">
+                            <img src="img/moon1.png" alt="國井研究室で開発していた小型群ロボット" class="w-full rounded-xl border border-black/10 object-cover shadow-sm mb-2" onerror="this.src='https://images.unsplash.com/photo-1614729939124-03290b5509ce?auto=format&fit=crop&q=80&w=800'; this.onerror=null;">
+                            <p class="text-xs text-appleGray text-center">國井研究室で開発していた小型群ロボット「RED」</p>
+                        </div>
+
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">機体の改良と実験</h4>
+                        <p class="mb-4">私は主に、機体のハードウェア改良とシミュレーション環境の構築を担当しました。</p>
+                        <p class="mb-4">機体の改良においては、例えばロボットの跳躍パッドの設計があります。CADによる設計、3Dプリンタでの造形、実機テスト、モーションキャプチャデータを用いた評価というサイクルを反復し、走行性能と跳躍性能のバランスが取れた形状を開発しました。また、JAXA相模原キャンパスの探査実験棟で10日間にわたり実施した実験に向けては、高さ数メートルの砂山を登れるよう、車輪の強度向上や高トルクモータの搭載といった改良を施しました。</p>
+
+                        <div class="my-6">
+                            <img src="img/moon2.png" alt="実験のデータ収集に使用するモーションキャプチャ" class="w-full rounded-xl border border-black/10 object-cover shadow-sm mb-2" onerror="this.style.display='none'">
+                            <p class="text-xs text-appleGray text-center">実験のデータ収集に使用するモーションキャプチャ</p>
+                        </div>
+
+                        <p class="mb-4">さらに、実験におけるモーションキャプチャデータの解析に時間を要することが課題となっていたため、エクスポートデータを読み込むだけで最適なデータトリミングと自動解析を行うアプリケーションも独自に開発しました。詳細については<a href="#" class="modal-scroll-link font-medium text-appleBlue hover:underline transition-colors" data-target="projects">Featured Projectsのセクション</a>をご覧ください。</p>
+
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">シミュレーション環境の構築</h4>
+                        <p class="mb-4">シミュレーションに関しては、機体に実装されているアルゴリズムを2D環境で再現するプログラムを制作しました。これにより、実環境を模擬した複雑な地形で目標の探査率を達成するために必要な機数を算出したり、得られた探査率から元の地形を逆推定するといった検証を行いました。</p>
+
+                        <div class="my-6">
+                            <img src="img/moon3.png" alt="シミュレーション結果の一部" class="w-full rounded-xl border border-black/10 object-cover shadow-sm mb-2" onerror="this.style.display='none'">
+                            <p class="text-xs text-appleGray text-center">シミュレーション結果の一部</p>
+                        </div>
+
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">オーストラリアでの洞窟実証実験</h4>
+                        <p class="mb-4">プロジェクトの一環として、従来の共同研究機関に加え、オーストラリアの国立科学機関CSIROと共同で、クイーンズランド州の洞窟において実機を用いた実証実験が行われました。私は研究室を代表する選抜メンバー5名のうちの1人として参加し、有用なデータを取得することができました。詳細については<a href="#" class="modal-scroll-link font-medium text-appleBlue hover:underline transition-colors" data-target="achievements">Achievementsのセクション</a>をご覧ください。</p>
+
+                        <div class="my-6">
+                            <img src="https://www.isas.jaxa.jp/topics/files/20260319_3.png" alt="ヒートマップ解析データ" class="w-full rounded-xl border border-black/10 object-cover shadow-sm mb-2">
+                            <p class="text-xs text-appleGray text-center">私が定点映像からヒートマップ解析を実施したもの</p>
+                        </div>
+
+                        <p class="mb-4">洞窟環境下では、モーションキャプチャのような精密な測位システムを利用できません。そこで、定点カメラの映像からロボットのLED光や機体の色を追跡し、移動軌跡と探査状況のヒートマップを描画するプログラムを開発することで、実験データの可視化に貢献しました。</p>
+
+                        <div class="mt-8 pt-6 border-t border-black/10 flex flex-wrap gap-4">
+                            <a href="https://moonshot.r.chuo-u.ac.jp/kunii/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-2.5 bg-appleDark text-white hover:bg-black rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                                <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>國井ムーンショットプロジェクト
+                            </a>
+                            <a href="https://www.hmsl.elect.chuo-u.ac.jp/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-2.5 bg-appleDark text-white hover:bg-black rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                                <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>中央大学國井研究室
+                            </a>
+                        </div>
+                    `
+                },
+                {
+                    period: "2026年度以降 - 修士課程",
+                    title: "ハプティクス技術の研究",
+                    organization: "東京科学大学大学院 情報通信系",
+                    description: "2026年度より学びの場を東京科学大学へ移し、主にVRとハプティクスを研究している長谷川研究室に配属となり、これらの分野について研究を進めていく予定です。詳しい研究内容等はこれから指導教官と相談の上決定する予定です。",
+                    icon: "fa-solid fa-hand-sparkles",
+                    details: `
+                        <p class="mb-4">2026年度より学びの場を東京科学大学へ移し、研究内容も変わることになりました。</p>
+                        <p class="mb-4">主にVRとハプティクスを研究している長谷川研究室に配属となり、これらの分野について研究を進めていく予定です。具体的な研究テーマ等については、これから指導教員と相談の上決定していきます。</p>
+                        <div class="mt-8 pt-6 border-t border-black/10 flex flex-wrap gap-4">
+                            <a href="https://haselab.net/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-2.5 bg-appleDark text-white hover:bg-black rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                                <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>東京科学大学長谷川研究室
+                            </a>
+                        </div>
+                    `
                 }
             ],
             projects: [
@@ -446,7 +528,7 @@
 
                         <h4 class="font-bold text-appleDark mb-2">その他の制作ジャンル</h4>
                         <p class="text-sm text-appleDark/80 leading-relaxed bg-black/5 p-4 rounded-lg border border-black/10">
-                            学園祭公式記録映像、体育祭公式記録映像（DVD販売）、バラエティ番組風映像、ドッキリ番組風映像、お別れ会用スライドショーなど
+                            学園祭公式記録映像、体育祭公式記録映像、バラエティ番組風映像、ドッキリ番組風映像、お別れ会用スライドショーなど
                         </p>
                     `,
                     image: "img/fcpx.png",
@@ -577,20 +659,43 @@
 
             // Skills
             const skillsContainer = document.getElementById('skills-container');
-            const levelStyles = { 3: 'bg-appleBlue/20 border-appleBlue/30 hover:bg-appleBlue/30', 2: 'bg-appleBlue/5 border-appleBlue/10 hover:bg-appleBlue/15', 1: 'bg-white/30 border-white/40 hover:bg-white/50' };
+            const levelStyles = { 3: 'bg-appleBlue/20 border-appleBlue/30 hover:bg-appleBlue/30', 2: 'bg-appleBlue/5 border-appleBlue/10 hover:bg-appleBlue/15', 1: 'bg-white/20 border-white/30 hover:bg-white/40' };
             portfolioData.skills.forEach(skillGroup => {
                 const itemsHtml = skillGroup.items.map(item => `<div class="p-4 rounded-xl border transition-all duration-200 ${levelStyles[item.level]}"><div class="flex items-center justify-between gap-3"><span class="text-sm font-bold text-appleDark truncate">${item.name}</span></div>${item.note ? `<div class="text-[12px] text-appleDark/60 mt-1.5 leading-tight">${item.note}</div>` : ''}</div>`).join('');
                 skillsContainer.innerHTML += `<div class="glass-panel p-6 md:p-8 flex flex-col h-full"><div class="flex items-center gap-4 mb-6"><div class="w-12 h-12 glass-button text-appleBlue rounded-2xl flex items-center justify-center text-xl shadow-sm shrink-0"><i class="${skillGroup.icon}"></i></div><h3 class="text-xl font-bold text-appleDark">${skillGroup.category}</h3></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow content-start">${itemsHtml}</div></div>`;
             });
 
-            // Projects (クリックでモーダルを開く仕様に変更)
+            // Research
+            const researchContainer = document.getElementById('research-container');
+            portfolioData.research.forEach((item, index) => {
+                researchContainer.innerHTML += `
+                    <div class="glass-panel p-6 md:p-8 flex flex-col md:flex-row gap-5 md:gap-8 items-start transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:bg-white/20 cursor-pointer group" data-research-index="${index}">
+                        <div class="w-14 h-14 md:w-16 md:h-16 rounded-2xl glass-button flex items-center justify-center text-appleBlue text-2xl md:text-3xl shrink-0 shadow-sm group-hover:scale-105 transition-transform">
+                            <i class="${item.icon}"></i>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex flex-wrap items-center gap-3 mb-3">
+                                <span class="px-3 py-1 bg-appleDark text-white text-xs font-bold rounded-md tracking-wider shadow-sm">${item.period}</span>
+                                <span class="text-sm font-semibold text-appleGray">${item.organization}</span>
+                            </div>
+                            <h3 class="text-xl md:text-2xl font-bold text-appleDark mb-4 group-hover:text-appleBlue transition-colors">${item.title}</h3>
+                            <p class="text-appleDark/80 leading-relaxed text-sm md:text-base">${item.description}</p>
+                        </div>
+                        <div class="shrink-0 text-appleGray/40 group-hover:text-appleBlue transition-colors mt-2 md:mt-0 self-end md:self-start hidden sm:block">
+                            <i class="fa-solid fa-arrow-right -rotate-45"></i>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Projects
             const projectsContainer = document.getElementById('projects-container');
             portfolioData.projects.forEach((project, index) => {
                 const techTags = project.techStack.map(tech => `<span class="text-xs font-semibold text-appleDark/80 bg-black/5 px-2.5 py-1 rounded-md border border-black/5">${tech}</span>`).join('');
-                const links = project.links.map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 flex items-center justify-center glass-button rounded-full text-appleDark hover:text-appleBlue hover:scale-105 transition-all relative z-10" aria-label="${link.type}"><i class="${link.icon}"></i></a>`).join('');
+                const links = project.links.map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 flex items-center justify-center glass-button rounded-full text-appleDark hover:text-appleBlue hover:scale-105 transition-all relative z-10 shadow-sm" aria-label="${link.type}"><i class="${link.icon}"></i></a>`).join('');
                 
                 projectsContainer.innerHTML += `
-                    <div class="glass-panel p-2 flex flex-col group cursor-pointer hover:-translate-y-2 hover:shadow-xl transition-all duration-300" data-project-index="${index}">
+                    <div class="glass-panel p-2 flex flex-col group cursor-pointer hover:-translate-y-2 hover:shadow-xl transition-all duration-300 hover:bg-white/20" data-project-index="${index}">
                         <div class="relative h-48 md:h-56 overflow-hidden rounded-[1.2rem] border border-black/5">
                             <img src="${project.image}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
                         </div>
@@ -610,14 +715,13 @@
             // Achievements
             const achievementsContainer = document.getElementById('achievements-container');
             portfolioData.achievements.forEach((ach, index) => {
-                achievementsContainer.innerHTML += `<div class="glass-panel p-6 sm:p-8 hover:-translate-y-1 hover:shadow-lg hover:bg-white/60 transition-all duration-300 cursor-pointer group flex flex-col h-full" data-achievement-index="${index}"><div class="flex items-start gap-4 sm:gap-6"><div class="flex items-center justify-center w-12 h-12 rounded-full glass-button text-appleBlue shrink-0 group-hover:scale-110 transition-transform"><i class="fa-solid fa-award text-lg"></i></div><div class="flex-grow"><span class="inline-block px-2.5 py-1 bg-appleDark text-white text-[10px] font-bold rounded-md tracking-wider mb-3">${ach.date}</span><h3 class="text-lg sm:text-xl font-bold text-appleDark mb-2 leading-tight group-hover:text-appleBlue transition-colors">${ach.title}</h3><p class="text-sm text-appleDark/70 leading-relaxed">${ach.summary}</p></div><div class="shrink-0 text-appleGray/40 group-hover:text-appleBlue transition-colors mt-1"><i class="fa-solid fa-arrow-right -rotate-45"></i></div></div></div>`;
+                achievementsContainer.innerHTML += `<div class="glass-panel p-6 sm:p-8 hover:-translate-y-1 hover:shadow-lg hover:bg-white/20 transition-all duration-300 cursor-pointer group flex flex-col h-full" data-achievement-index="${index}"><div class="flex items-start gap-4 sm:gap-6"><div class="flex items-center justify-center w-12 h-12 rounded-full glass-button text-appleBlue shrink-0 group-hover:scale-110 transition-transform shadow-sm"><i class="fa-solid fa-award text-lg"></i></div><div class="flex-grow"><span class="inline-block px-2.5 py-1 bg-appleDark text-white text-[10px] font-bold rounded-md tracking-wider mb-3 shadow-sm">${ach.date}</span><h3 class="text-lg sm:text-xl font-bold text-appleDark mb-2 leading-tight group-hover:text-appleBlue transition-colors">${ach.title}</h3><p class="text-sm text-appleDark/70 leading-relaxed">${ach.summary}</p></div><div class="shrink-0 text-appleGray/40 group-hover:text-appleBlue transition-colors mt-1"><i class="fa-solid fa-arrow-right -rotate-45"></i></div></div></div>`;
             });
 
             // Modal System
             const modal = document.getElementById('detail-modal');
             const modalContentBox = document.getElementById('modal-content-box');
             const modalCloseBtn = document.getElementById('modal-close');
-            const navContainer = document.getElementById('nav-container');
             
             const updateScrollbarWidth = () => {
                 const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
@@ -627,7 +731,6 @@
             updateScrollbarWidth();
             window.addEventListener('resize', updateScrollbarWidth);
 
-            // 汎用モーダル展開関数
             const openModal = (title, date, bodyHtml) => {
                 updateScrollbarWidth();
                 
@@ -642,11 +745,15 @@
                     dateEl.classList.remove('inline-block');
                 }
                 
-                document.getElementById('modal-body').innerHTML = `<div class="text-appleDark/80 leading-relaxed space-y-4 text-[15px] sm:text-base">${bodyHtml}</div>`;
+                const modalBody = document.getElementById('modal-body');
+                modalBody.innerHTML = `<div class="text-appleDark/80 leading-relaxed space-y-4 text-[15px] sm:text-base">${bodyHtml}</div>`;
                 
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
                 document.body.classList.add('modal-open');
+
+                // モーダルが表示(display: flex)されてからスクロール位置をリセットする
+                modalBody.scrollTop = 0;
 
                 setTimeout(() => {
                     modal.classList.remove('opacity-0');
@@ -655,7 +762,27 @@
                 }, 10);
             };
 
-            // Achievementsのクリックイベント
+            const closeModal = () => {
+                modal.classList.add('opacity-0');
+                modalContentBox.classList.remove('scale-100');
+                modalContentBox.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    document.body.classList.remove('modal-open');
+                }, 300);
+            };
+
+            // Event Listeners for Modals
+            researchContainer.addEventListener('click', (e) => {
+                const card = e.target.closest('[data-research-index]');
+                if (!card) return;
+                const index = card.getAttribute('data-research-index');
+                const res = portfolioData.research[index];
+                const contentHtml = res.details || `<p>${res.description}</p>`;
+                openModal(res.title, res.period, contentHtml);
+            });
+
             achievementsContainer.addEventListener('click', (e) => {
                 const card = e.target.closest('[data-achievement-index]');
                 if (!card) return;
@@ -664,9 +791,7 @@
                 openModal(ach.title, ach.date, ach.description);
             });
 
-            // Projectsのクリックイベント
             projectsContainer.addEventListener('click', (e) => {
-                // aタグ（外部へのリンクボタン）がクリックされた場合はモーダルを開かず通常遷移させる
                 if (e.target.closest('a')) return;
                 
                 const card = e.target.closest('[data-project-index]');
@@ -674,9 +799,15 @@
                 const index = card.getAttribute('data-project-index');
                 const proj = portfolioData.projects[index];
                 
-                let contentHtml = proj.details || `<p>${proj.description}</p>`;
+                let contentHtml = '';
                 
-                // プロジェクトにリンク情報がある場合、モーダル下部にもボタンとして表示
+                // モーダル上部にサムネイル画像を表示
+                if (proj.image) {
+                    contentHtml += `<img src="${proj.image}" alt="${proj.title}" class="w-full max-h-80 object-cover rounded-xl mb-6 border border-black/5 shadow-sm">`;
+                }
+                
+                contentHtml += proj.details || `<p>${proj.description}</p>`;
+                
                 if (proj.links && proj.links.length > 0) {
                     const linkButtons = proj.links.map(link => {
                         let text = 'リンク';
@@ -692,24 +823,35 @@
                 openModal(proj.title, null, contentHtml);
             });
 
-            const closeModal = () => {
-                modal.classList.add('opacity-0');
-                modalContentBox.classList.remove('scale-100');
-                modalContentBox.classList.add('scale-95');
-                setTimeout(() => {
-                    modal.classList.add('hidden');
-                    modal.classList.remove('flex');
-                    document.body.classList.remove('modal-open');
-                }, 300);
-            };
+            // モーダル内のスクロールリンクの処理
+            document.getElementById('modal-body').addEventListener('click', (e) => {
+                if (e.target.classList.contains('modal-scroll-link')) {
+                    e.preventDefault();
+                    const targetId = e.target.getAttribute('data-target');
+                    closeModal();
+                    setTimeout(() => {
+                        const targetElement = document.getElementById(targetId);
+                        if (targetElement) {
+                            targetElement.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }, 300); // モーダルが閉じるアニメーションを待ってからスクロール
+                }
+            });
 
             modalCloseBtn.addEventListener('click', closeModal);
             modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
 
+            // ESCキーでモーダルを閉じる
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    closeModal();
+                }
+            });
+
             // Timeline
             const timelineContainer = document.getElementById('timeline-container');
             portfolioData.timeline.forEach((item) => {
-                timelineContainer.innerHTML += `<div class="relative pl-6 md:pl-10 group"><div class="absolute left-[-13px] top-8 w-6 h-6 glass-button rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 z-10"><div class="w-2.5 h-2.5 bg-appleBlue rounded-full"></div></div><div class="glass-panel p-6 md:p-8 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:bg-white/40"><div class="flex flex-col md:flex-row md:items-center gap-3 mb-4"><span class="inline-block px-3 py-1 bg-appleDark text-white text-xs font-bold rounded-md tracking-wider w-fit">${item.year}</span><h3 class="text-xl font-bold text-appleDark">${item.title}</h3></div>${item.subtitle ? `<h4 class="text-md font-semibold text-appleGray mb-3">${item.subtitle}</h4>` : ''}<p class="text-appleDark/80 text-sm leading-relaxed">${item.description}</p></div></div>`;
+                timelineContainer.innerHTML += `<div class="relative pl-6 md:pl-10 group"><div class="absolute left-[-13px] top-8 w-6 h-6 glass-button rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 z-10 shadow-sm"><div class="w-2.5 h-2.5 bg-appleBlue rounded-full"></div></div><div class="glass-panel p-6 md:p-8 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:bg-white/20"><div class="flex flex-col md:flex-row md:items-center gap-3 mb-4"><span class="inline-block px-3 py-1 bg-appleDark text-white text-xs font-bold rounded-md tracking-wider w-fit shadow-sm">${item.year}</span><h3 class="text-xl font-bold text-appleDark">${item.title}</h3></div>${item.subtitle ? `<h4 class="text-md font-semibold text-appleGray mb-3">${item.subtitle}</h4>` : ''}<p class="text-appleDark/80 text-sm leading-relaxed">${item.description}</p></div></div>`;
             });
             timelineContainer.innerHTML += `<svg class="absolute top-full left-[-9px] w-[16px] h-[14px] text-appleBlue/20 overflow-visible !mt-0" viewBox="0 0 16 14" fill="none"><line x1="8" y1="0" x2="8" y2="12" stroke="currentColor" stroke-width="2" /><path d="M2 6 L8 12 L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>`;
 
@@ -717,7 +859,7 @@
             document.getElementById('contact-text').textContent = portfolioData.contactText;
             document.getElementById('contact-email-btn').href = `mailto:${portfolioData.profile.email}`;
             const socialLinksContainer = document.getElementById('social-links');
-            portfolioData.socials.forEach(social => { socialLinksContainer.innerHTML += `<a href="${social.url}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 flex items-center justify-center rounded-full glass-button text-appleDark hover:text-appleBlue hover:scale-110 transition-all" aria-label="${social.name}"><i class="${social.icon} text-xl"></i></a>`; });
+            portfolioData.socials.forEach(social => { socialLinksContainer.innerHTML += `<a href="${social.url}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 flex items-center justify-center rounded-full glass-button text-appleDark hover:text-appleBlue hover:scale-110 transition-all shadow-sm" aria-label="${social.name}"><i class="${social.icon} text-xl"></i></a>`; });
 
             // Menu Toggle
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
