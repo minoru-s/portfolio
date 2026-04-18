@@ -128,10 +128,14 @@
             padding-right: var(--scrollbar-width, 0px);
         }
         
-        body.no-scroll #nav-container,
-        body.no-scroll #mobile-menu,
-        body.no-scroll #detail-modal {
-            padding-right: var(--scrollbar-width, 0px);
+        /* Fixed position elements shifting prevention */
+        body.no-scroll #nav-container {
+            width: calc(100% - var(--scrollbar-width, 0px));
+        }
+
+        body.no-scroll #detail-modal,
+        body.no-scroll #mobile-menu {
+            right: var(--scrollbar-width, 0px);
         }
 
         /* 独自スクロールバー（更新履歴用） */
