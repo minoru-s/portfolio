@@ -122,14 +122,16 @@
         ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
 
-        /* モーダル表示時の背景固定とガタつき防止 */
-        body.modal-open {
+        /* モーダル・メニュー表示時の背景固定とガタつき防止 */
+        body.no-scroll {
             overflow: hidden;
             padding-right: var(--scrollbar-width, 0px);
         }
         
-        body.modal-open #nav-container {
-            padding-right: calc(1rem + var(--scrollbar-width, 0px));
+        body.no-scroll #nav-container,
+        body.no-scroll #mobile-menu,
+        body.no-scroll #detail-modal {
+            padding-right: var(--scrollbar-width, 0px);
         }
 
         /* 独自スクロールバー（更新履歴用） */
@@ -1222,7 +1224,7 @@
                 
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
-                document.body.classList.add('modal-open');
+                document.body.classList.add('no-scroll');
 
                 // モーダルが表示(display: flex)されてからスクロール位置をリセットする
                 modalBody.scrollTop = 0;
@@ -1241,7 +1243,7 @@
                 setTimeout(() => {
                     modal.classList.add('hidden');
                     modal.classList.remove('flex');
-                    document.body.classList.remove('modal-open');
+                    document.body.classList.remove('no-scroll');
                 }, 300);
             };
 
@@ -1335,14 +1337,15 @@
             const mobileMenu = document.getElementById('mobile-menu');
             const menuIcon = mobileMenuBtn.querySelector('i');
             function toggleMenu() {
+                updateScrollbarWidth();
                 mobileMenu.classList.toggle('hidden');
                 mobileMenu.classList.toggle('flex');
                 if (mobileMenu.classList.contains('hidden')) {
                     menuIcon.classList.replace('fa-xmark', 'fa-bars');
-                    document.body.style.overflow = 'auto';
+                    document.body.classList.remove('no-scroll');
                 } else {
                     menuIcon.classList.replace('fa-bars', 'fa-xmark');
-                    document.body.style.overflow = 'hidden';
+                    document.body.classList.add('no-scroll');
                 }
             }
             mobileMenuBtn.addEventListener('click', toggleMenu);
