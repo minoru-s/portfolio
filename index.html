@@ -122,14 +122,20 @@
         ::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.15); border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(0, 0, 0, 0.3); }
 
-        /* モーダル表示時の背景固定とガタつき防止 */
-        body.modal-open {
+        /* モーダル・メニュー表示時の背景固定とガタつき防止 */
+        body.no-scroll {
             overflow: hidden;
             padding-right: var(--scrollbar-width, 0px);
         }
         
-        body.modal-open #nav-container {
-            padding-right: calc(1rem + var(--scrollbar-width, 0px));
+        /* Fixed position elements shifting prevention */
+        body.no-scroll #nav-container {
+            width: calc(100% - var(--scrollbar-width, 0px));
+        }
+
+        body.no-scroll #detail-modal,
+        body.no-scroll #mobile-menu {
+            right: var(--scrollbar-width, 0px);
         }
 
         /* 独自スクロールバー（更新履歴用） */
@@ -143,6 +149,20 @@
         .custom-scroll::-webkit-scrollbar-thumb {
             background: rgba(0,0,0,0.1);
             border-radius: 8px;
+        }
+
+        /* モーダル内の画像最大幅の制限（PC用） */
+        @media (min-width: 768px) {
+            #modal-body img {
+                max-width: 75%;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            #modal-body .group img,
+            #modal-body .grid img {
+                max-width: 100%;
+                margin: 0;
+            }
         }
     </style>
 </head>
@@ -169,9 +189,14 @@
                 <a href="#contact" class="hover:text-appleBlue transition-colors">Contact</a>
             </div>
 
-            <button id="mobile-menu-btn" class="md:hidden text-2xl text-appleDark focus:outline-none">
-                <i class="fa-solid fa-bars"></i>
-            </button>
+            <div class="flex items-center space-x-4">
+                <button id="lang-toggle-btn" class="text-sm font-bold text-appleDark hover:text-appleBlue focus:outline-none transition-colors border border-appleDark/20 rounded-full px-3 py-1">
+                    JA / EN
+                </button>
+                <button id="mobile-menu-btn" class="md:hidden text-2xl text-appleDark focus:outline-none">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
         </nav>
     </div>
 
@@ -295,7 +320,7 @@
 
     <!-- Data & Logic -->
     <script>
-        const portfolioData = {
+        const portfolioDataJa = {
             profile: {
                 name: "西藤 実",
                 englishName: "Minoru SAITO",
@@ -642,33 +667,447 @@
             contactText: "私のポートフォリオをご覧いただきありがとうございます。ご連絡は、以下のボタンからメールにてお願いいたします。"
         };
 
-        document.addEventListener('DOMContentLoaded', () => {
+
+        const portfolioDataEn = {
+            profile: {
+                name: "Minoru SAITO",
+                englishName: "Minoru SAITO",
+                firstName: "Minoru",
+                greeting: "Hello, I'm",
+                title: "1st Year Master's Student at Institute of Science Tokyo",
+                description: "I have enjoyed creating things by touching a wide range of technologies following my curiosity. I aim to actively jump into unknown areas and create new value.",
+                image: "img/me.jpg",
+                email: "saito.minoru.info@gmail.com",
+            },
+            about: `
+                <div class="space-y-4 mb-8">
+                    <p>I have worked on a wide range of creations using PCs, from programming to video editing, 3D CAD, and graphic design. I find great fulfillment when what I make is useful to someone.</p>
+                    <p>My motto is "When in doubt, choose the path that requires courage," and I challenge myself with various things every day.</p>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-6 border-t border-black/5">
+                    <div class="flex items-center text-appleDark/80">
+                        <div class="w-8 text-center text-appleBlue"><i class="fa-solid fa-location-dot"></i></div>
+                        <span class="text-sm font-medium">From Mie Prefecture</span>
+                    </div>
+                    <div class="flex items-center text-appleDark/80">
+                        <div class="w-8 text-center text-appleBlue"><i class="fa-solid fa-language"></i></div>
+                        <span class="text-sm font-medium">TOEIC L&R 835 (Acquired Feb 2025)</span>
+                    </div>
+                    <div class="flex items-center text-appleDark/80">
+                        <div class="w-8 text-center text-appleBlue"><i class="fa-solid fa-graduation-cap"></i></div>
+                        <span class="text-sm font-medium">Enrolled at Institute of Science Tokyo</span>
+                    </div>
+                    <div class="flex items-center text-appleDark/80">
+                        <div class="w-8 text-center text-appleBlue"><i class="fa-solid fa-laptop-code"></i></div>
+                        <span class="text-sm font-medium">Software / Hardware / Video / Design</span>
+                    </div>
+                </div>
+            `,
+            skills: [
+                {
+                    category: "Programming",
+                    icon: "fa-solid fa-code",
+                    items: [
+                        { name: "HTML / CSS", level: 3 },
+                        { name: "Python", level: 2, note: "pandas, NumPy, matplotlib" },
+                        { name: "C", level: 2 },
+                        { name: "C#", level: 2 },
+                        { name: "R", level: 2 },
+                        { name: "MATLAB", level: 1 },
+                        { name: "Ruby", level: 1, note: "Basics" }
+                    ]
+                },
+                {
+                    category: "Hardware & IoT",
+                    icon: "fa-solid fa-microchip",
+                    items: [
+                        { name: "Arduino", level: 3 },
+                        { name: "Raspberry Pi", level: 2 }
+                    ]
+                },
+                {
+                    category: "Creative & Modeling",
+                    icon: "fa-solid fa-cube",
+                    items: [
+                        { name: "Final Cut Pro X", level: 3, note: "Video Editing (10 years)" },
+                        { name: "Adobe Illustrator", level: 2 },
+                        { name: "Autodesk Fusion", level: 2 },
+                        { name: "Unity", level: 2 }
+                    ]
+                },
+                {
+                    category: "Tools & OS",
+                    icon: "fa-solid fa-toolbox",
+                    items: [
+                        { name: "LaTeX", level: 3 },
+                        { name: "Git / GitHub", level: 2 },
+                        { name: "macOS", level: 3, note: "Main Environment" },
+                        { name: "Windows", level: 2, note: "Occasional Use" },
+                        { name: "Linux", level: 1, note: "Rare Use" }
+                    ]
+                }
+            ],
+            research: [
+                {
+                    period: "FY2025 - Senior Year",
+                    title: "Research and Development of Lunar Exploration Robots",
+                    organization: "Chuo University, Dept. of Electrical, Electronic, and Communication Engineering",
+                    description: "I was involved in the research and development of small swarm robots aimed at exploring lunar lava tubes. As a joint project with JAXA and AIST, I experienced a wide range of activities from building simulation environments to demonstration experiments at JAXA's exploration test building. I also participated in field tests in caves in Australia, mainly in charge of data processing such as trajectory analysis and heatmap generation.",
+                    icon: "fa-solid fa-rocket",
+                    details: `
+                        <p class="mb-4">In my senior year, I belonged to the Kunii Laboratory at Chuo University, where I conducted research and development on small swarm robots capable of jumping, aimed at exploring lunar lava tubes. This research was adopted as a Moonshot Research and Development Program, advanced jointly with JAXA, AIST, Tokyo University of Agriculture and Technology, etc.</p>
+
+                        <div class="my-6">
+                            <img src="img/moon1.png" alt="Small swarm robot developed in Kunii Lab" class="w-full rounded-xl border border-black/10 object-cover shadow-sm mb-2" onerror="this.src='https://images.unsplash.com/photo-1614729939124-03290b5509ce?auto=format&fit=crop&q=80&w=800'; this.onerror=null;">
+                            <p class="text-xs text-appleGray text-center">Small swarm robot "RED" developed in Kunii Lab</p>
+                        </div>
+
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">Improvements and Experiments</h4>
+                        <p class="mb-4">I was mainly in charge of improving the hardware of the robot and building the simulation environment.</p>
+                        <p class="mb-4">For the hardware improvement, for example, there is the design of the jumping pad of the robot. Through an iterative cycle of CAD design, 3D printing, actual machine testing, and evaluation using motion capture data, we developed a shape that balances running and jumping performance. Also, for the 10-day experiment conducted at the exploration experiment building on the JAXA Sagamihara Campus, we made improvements such as increasing wheel strength and mounting high-torque motors to climb sand dunes several meters high.</p>
+
+                        <div class="my-6">
+                            <img src="img/moon2.png" alt="Motion capture used for data collection in experiments" class="w-full rounded-xl border border-black/10 object-cover shadow-sm mb-2" onerror="this.style.display='none'">
+                            <p class="text-xs text-appleGray text-center">Motion capture used for data collection in experiments</p>
+                        </div>
+
+                        <p class="mb-4">Furthermore, since the analysis of motion capture data in experiments was a challenge due to the time required, I independently developed an application that performs optimal data trimming and automatic analysis just by importing exported data. For more details, please see the <a href="#" class="modal-scroll-link font-medium text-appleBlue hover:underline transition-colors" data-target="projects">Featured Projects section</a>.</p>
+
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">Simulation Environment Construction</h4>
+                        <p class="mb-4">Regarding the simulation, I created a program that reproduces the algorithm implemented in the robot in a 2D environment. With this, we verified aspects such as calculating the number of robots required to achieve the target exploration rate in complex terrain simulating real environments, or inversely estimating the original terrain from the obtained exploration rate.</p>
+
+                        <div class="my-6">
+                            <img src="img/moon3.png" alt="Part of simulation results" class="w-full rounded-xl border border-black/10 object-cover shadow-sm mb-2" onerror="this.style.display='none'">
+                            <p class="text-xs text-appleGray text-center">Part of simulation results</p>
+                        </div>
+
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">Cave Demonstration Experiment in Australia</h4>
+                        <p class="mb-4">As part of the project, a demonstration experiment using actual machines was conducted in a cave in Queensland, jointly with the Australian national science agency CSIRO, in addition to the conventional joint research institutions. I participated as one of the 5 selected members representing the laboratory and acquired useful data. For details, please see the <a href="#" class="modal-scroll-link font-medium text-appleBlue hover:underline transition-colors" data-target="achievements">Achievements section</a>.</p>
+
+                        <div class="my-6">
+                            <img src="https://www.isas.jaxa.jp/topics/files/20260319_3.png" alt="Heatmap analysis data" class="w-full rounded-xl border border-black/10 object-cover shadow-sm mb-2">
+                            <p class="text-xs text-appleGray text-center">Heatmap analysis I performed from fixed-point video</p>
+                        </div>
+
+                        <p class="mb-4">In a cave environment, precise positioning systems like motion capture cannot be used. Therefore, I contributed to the visualization of experimental data by developing a program that tracks the LED light or body color of the robot from fixed-point camera footage and draws a heatmap of the movement trajectory and exploration status.</p>
+
+                        <div class="mt-8 pt-6 border-t border-black/10 flex flex-wrap gap-4">
+                            <a href="https://moonshot.r.chuo-u.ac.jp/kunii/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-2.5 bg-appleDark text-white hover:bg-black rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                                <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>Kunii Moonshot Project
+                            </a>
+                            <a href="https://www.hmsl.elect.chuo-u.ac.jp/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-2.5 bg-appleDark text-white hover:bg-black rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                                <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>Kunii Lab, Chuo University
+                            </a>
+                        </div>
+                    `
+                },
+                {
+                    period: "FY2026 onwards - Master's Program",
+                    title: "Research on Haptics Technology",
+                    organization: "Institute of Science Tokyo, Dept. of Information and Communications Engineering",
+                    description: "From FY2026, I will move my place of learning to the Institute of Science Tokyo, and will be assigned to the Hasegawa Laboratory, which mainly researches VR and haptics, to proceed with research in these fields. Detailed research contents will be decided in consultation with my supervisor.",
+                    icon: "fa-solid fa-hand-sparkles",
+                    details: `
+                        <p class="mb-4">From FY2026, I will move my place of learning to the Institute of Science Tokyo, and my research content will also change.</p>
+                        <p class="mb-4">I will be assigned to the Hasegawa Laboratory, which mainly researches VR and haptics, and plan to advance research in these fields. Specific research themes will be decided in consultation with my academic supervisor from now on.</p>
+                        <div class="mt-8 pt-6 border-t border-black/10 flex flex-wrap gap-4">
+                            <a href="https://haselab.net/" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-2.5 bg-appleDark text-white hover:bg-black rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                                <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>Hasegawa Lab, Institute of Science Tokyo
+                            </a>
+                        </div>
+                    `
+                }
+            ],
+            projects: [
+                {
+                    title: "Mocap Plus",
+                    description: "An app that performs various analyses just by attaching motion capture output data.",
+                    details: `
+                        <p class="mb-4">This is a browser-completed motion capture data analysis application optimized for CSV files exported from OptiTrack's analysis software Motive.</p>
+                        <p class="mb-4">By simply uploading data, you can safely and easily perform visualization of trajectories and various data processing without sending it outside. In development, I utilized multiple LLMs such as Gemini, Claude, and ChatGPT to proceed with implementation efficiently.</p>
+
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">Main Features</h4>
+                        <ul class="space-y-4 text-sm text-appleDark/80 bg-black/5 p-5 rounded-xl border border-black/10">
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-chart-line text-appleBlue mt-0.5 mr-3 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <strong class="text-appleDark block mb-1">Wide Area Analysis Tool</strong>
+                                    Supports visualization of trajectory, heat map, and coverage. Flexible display settings such as Z-axis inversion and detailed downsampling are possible.
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-filter text-appleBlue mt-0.5 mr-3 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <strong class="text-appleDark block mb-1">Data Analysis and Processing Tool</strong>
+                                    Provides application of user-defined low-pass and Gaussian filters, automatic detection of active intervals, scattered display of data, and scaling of graphs.
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-scissors text-appleBlue mt-0.5 mr-3 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <strong class="text-appleDark block mb-1">Data Trimming and Distance Measurement</strong>
+                                    Equipped with a function to extract any interval and output it as a Motive-compatible CSV, and a function to measure the Euclidean distance between any two specified points.
+                                </div>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa-solid fa-gauge-high text-appleBlue mt-0.5 mr-3 w-4 text-center shrink-0"></i>
+                                <div>
+                                    <strong class="text-appleDark block mb-1">Reference Speed Calculation Tool</strong>
+                                    Tracking and speed calculation corresponding to exported data in quaternion format can be performed.
+                                </div>
+                            </li>
+                        </ul>
+                    `,
+                    image: "img/mocap.png",
+                    techStack: ["HTML", "CSS", "Multiple LLMs"],
+                    links: [
+                        { type: "github", url: "https://github.com/minoru-s/mocap", icon: "fa-brands fa-github" },
+                        { type: "demo", url: "https://minoru-s.github.io/mocap/", icon: "fa-solid fa-arrow-up-right-from-square" }
+                    ]
+                },
+                {
+                    title: "Video & Movie Production",
+                    description: "Produced more than 50 video works, mainly at the request of individuals and organizations. In charge of a wide range from shooting to editing.",
+                    details: `
+                        <p class="mb-4">I have produced more than 50 video works so far. Since most of them are produced at the request of individuals or organizations, I refrain from publishing them publicly, but it is possible to show them in person.</p>
+
+                        <h4 class="font-bold text-appleDark mb-3 mt-8">Past works available online</h4>
+                        <ul class="space-y-3 mb-8">
+                            <li>
+                                <a href="https://www.instagram.com/reel/C6y7a6ZSHWw/?utm_source=ig_web_copy_link&igsh=MzRlODBiNWFlZA==" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-start group">
+                                    <i class="fa-brands fa-instagram mt-1 mr-3 w-4 text-center group-hover:scale-110 transition-transform"></i>
+                                    <span>Mountaineering Club Introduction Movie<br><span class="text-xs text-appleGray">Sophomore / Editing</span></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://youtu.be/9TBJcdXb30c?si=WsEcUUXjA_TiGGv3" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-start group">
+                                    <i class="fa-brands fa-youtube mt-1 mr-3 w-4 text-center group-hover:scale-110 transition-transform"></i>
+                                    <span>Kaiyo Academy Music Club 6th Regular Concert<br><span class="text-xs text-appleGray">High School Junior / Shooting & Editing</span></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://youtu.be/55SkBS51Jrw?si=1qUItsyqxJj0F9aB" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-start group">
+                                    <i class="fa-brands fa-youtube mt-1 mr-3 w-4 text-center group-hover:scale-110 transition-transform"></i>
+                                    <span>Kaiyo Academy 2019 Sports Festa Trailer<br><span class="text-xs text-appleGray">High School Sophomore / Shooting & Editing</span></span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="https://www.youtube.com/watch?v=44hCbOIXLqs" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-start group">
+                                    <i class="fa-brands fa-youtube mt-1 mr-3 w-4 text-center group-hover:scale-110 transition-transform"></i>
+                                    <span>Kaiyo Academy Kaiyo Festival 2016 Digest Video<br><span class="text-xs text-appleGray">Middle School Freshman / Editing</span></span>
+                                </a>
+                            </li>
+                        </ul>
+
+                        <h4 class="font-bold text-appleDark mb-2">Other Production Genres</h4>
+                        <p class="text-sm text-appleDark/80 leading-relaxed bg-black/5 p-4 rounded-lg border border-black/10">
+                            School festival official record video, sports festival official record video, variety show style video, prank show style video, farewell party slideshow, etc.
+                        </p>
+                    `,
+                    image: "img/fcpx.png",
+                    techStack: ["Final Cut Pro X", "Shooting", "Video Editing"],
+                    links: []
+                },
+                {
+                    title: "Personal Portfolio Site",
+                    description: "Portfolio site created for job hunting. Adopted a design like Liquid Glass to build a modern UI.",
+                    image: "img/pf.png",
+                    techStack: ["HTML", "CSS", "JavaScript", "Tailwind CSS"],
+                    links: [
+                        { type: "github", url: "https://github.com/minoru-s", icon: "fa-brands fa-github" },
+                        { type: "demo", url: "#", icon: "fa-solid fa-arrow-up-right-from-square" }
+                    ]
+                }
+            ],
+            achievements: [
+                {
+                    title: "Research Content Featured on NHK BS Program",
+                    date: "Jan 2026",
+                    summary: "Received an interview about the research of the lunar exploration robot co-developed with JAXA, and broadcasted on the program.",
+                    description: `
+                        <p class="mb-4">I was interviewed by NHK BS about the research on small swarm robots aiming to explore lava tubes on the moon, which I am currently involved in. In the program, along with the introduction of the research contents, the data I analyzed was also broadcasted.</p>
+                        <p class="mb-4">This project is being advanced jointly with JAXA and the National Institute of Advanced Industrial Science and Technology, and I am devoting myself to research every day with the goal of the robot I was involved in R&D landing on the moon in the near future.</p>
+                        <div class="mt-8 mb-2">
+                            <a href="https://www.web.nhk/tv/an/frontiers/pl/series-tep-PM34JL2L14/ep/JZ37MV76G5" target="_blank" rel="noopener noreferrer" class="block group">
+                                <div class="flex flex-col sm:flex-row bg-white rounded-xl overflow-hidden border border-black/10 hover:shadow-md transition-shadow">
+                                    <div class="sm:w-1/3 bg-gray-100 flex items-center justify-center shrink-0 h-32 sm:h-auto">
+                                        <img src="https://imgu.web.nhk/static/assets/images/tvepisode/te/JZ37MV76G5/JZ37MV76G5-eyecatch_4c37bbd521090ab62701047e74977cef.jpg" alt="Program Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    </div>
+                                    <div class="p-4 sm:p-5 flex flex-col justify-center flex-grow">
+                                        <div class="text-[11px] font-bold text-appleGray mb-1">NHK BS Premium 4K</div>
+                                        <h4 class="font-bold text-appleDark text-sm sm:text-base leading-tight mb-2 group-hover:text-appleBlue transition-colors">Forefront of Lunar Robots from Japan</h4>
+                                        <div class="text-xs text-appleDark/70 mt-auto flex items-center pt-2">
+                                            <i class="fa-regular fa-calendar mr-1.5"></i>Initial Broadcast: Jan 26, 2026, 10:00 PM
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                    `
+                },
+                {
+                    title: "Participation in Australia-Japan Joint Demonstration Experiment",
+                    date: "Nov 2025",
+                    summary: "Participated in a demonstration experiment in a cave in Australia, which was published on official websites of each research institution.",
+                    description: `
+                        <p class="mb-4">As part of the research project, I participated in a cave experiment in Australia. The appearance of this experiment was introduced on the websites of multiple research institutions including the Australian national research institution CSIRO and JAXA.</p>
+                        <p class="mb-4">The data I conducted heatmap analysis from fixed-point video was posted as a screenshot in the JAXA article, and I was introduced with my real name in the CSIRO article.</p>
+                        <div class="grid sm:grid-cols-2 gap-4 mt-6 mb-8">
+                            <div>
+                                <img src="https://www.isas.jaxa.jp/topics/files/20260319_3.png" alt="Analysis Data" class="w-full rounded-lg border border-black/10 object-cover aspect-video">
+                                <p class="text-xs text-appleGray mt-2 text-center">Heatmap analysis I performed<br>from fixed-point video</p>
+                            </div>
+                            <div>
+                                <img src="https://research.csiro.au/robotics/wp-content/uploads/sites/592/2026/03/japan-australia-field-trials-group-hi-1536x1025.jpg" alt="Team Photo" class="w-full rounded-lg border border-black/10 object-cover aspect-video">
+                                <p class="text-xs text-appleGray mt-2 text-center">Australia-Japan Joint Research Team<br>&copy; CSIRO, Katrina Lo Surdo</p>
+                            </div>
+                        </div>
+                        <div class="p-4 sm:p-5 bg-black/5 rounded-lg border border-black/10">
+                            <h4 class="font-bold text-appleDark mb-3 text-sm">Related Articles</h4>
+                            <ul class="space-y-2 text-sm">
+                                <li><a href="https://research.csiro.au/robotics/csiro-japan-collaboration-advances-lunar-cave-robotics/" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>CSIRO Official Website</a></li>
+                                <li><a href="https://www.isas.jaxa.jp/topics/004219.html" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>JAXA Official Website</a></li>
+                                <li><a href="https://www.chuo-u.ac.jp/research/news/2026/03/84967/" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>Chuo University Official Website</a></li>
+                                <li><a href="https://www.tuat.ac.jp/NEWS/research/20260319_01.html" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>Tokyo University of Agriculture and Technology Official Website</a></li>
+                                <li><a href="https://moonshot.r.chuo-u.ac.jp/kunii/report/912/" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>Moonshot Research and Development Program</a></li>
+                            </ul>
+                        </div>
+                    `
+                },
+                {
+                    title: "Dean of Faculty of Science and Engineering Award",
+                    date: "May 2025",
+                    summary: "Selected as one of 3 grant-type scholarship recipients from about 1000 people based on academic and extracurricular activities.",
+                    description: `<p class="mb-4">In my fourth year at the Faculty of Science and Engineering, Chuo University, I was selected from about 1,000 peers for the Dean of the Faculty of Science and Engineering Award, a grant-type scholarship awarded to only 3 students, based on multifaceted evaluation of my studies and extracurricular activities.</p>`
+                }
+            ],
+            timeline: [
+                {
+                    year: "Apr 2016 - Mar 2022",
+                    title: "Kaiyo Academy",
+                    subtitle: "",
+                    description: "A boarding middle and high school located in Gamagori City, Aichi Prefecture. Joined the video club, producing many official recording videos and event movies. Also designed school festival pamphlets and student council magazines. Started learning HTML and CSS through self-study during this period."
+                },
+                {
+                    year: "Apr 2022 - Mar 2026",
+                    title: "Chuo University",
+                    subtitle: "Dept. of Electrical, Electronic, and Communication Engineering",
+                    description: "Learned a wide range of fields in electrical, electronic, and information communication. Belonged to a laboratory jointly developing lunar exploration robots with JAXA, AIST, Tokyo University of Agriculture and Technology, engaging in simulations and demonstrations at JAXA exploration experimental building. Participated in overseas experiments in Australia in Nov 2025."
+                },
+                {
+                    year: "Sep 2022 - Feb 2026",
+                    title: "Major Programming School",
+                    subtitle: "Part-time Instructor",
+                    description: "For three and a half years, I taught programming to students ranging from elementary to high school both in person and online. Mainly taught Unity+C#, Python, and Scratch."
+                },
+                {
+                    year: "Apr 2026 - Mar 2028 (Expected)",
+                    title: "Institute of Science Tokyo",
+                    subtitle: "School of Engineering, Dept. of Information and Communications Engineering",
+                    description: "Will advance to graduate school to engage in research on haptics."
+                }
+            ],
+            socials: [
+                { name: "GitHub", url: "https://github.com/minoru-s", icon: "fa-brands fa-github" },
+                { name: "LinkedIn", url: "https://www.linkedin.com/in/minoru-s/", icon: "fa-brands fa-linkedin-in" },
+                { name: "Facebook", url: "https://www.facebook.com/SAITOMlNORU", icon: "fa-brands fa-facebook" }
+            ],
+            contactText: "Thank you for viewing my portfolio. Please contact me via email from the button below."
+        };
+
+
+        const translations = {
+            ja: {
+                viewDetails: "詳細を見る",
+                sendEmail: "メールを送る",
+                viewProjects: "プロジェクトを見る",
+                about: "About Me",
+                skills: "Skills",
+                research: "Research",
+                featuredProjects: "Featured Projects",
+                achievements: "Achievements",
+                experience: "Experience & Education",
+                getInTouch: "Get In Touch",
+                advanced: "Advanced",
+                intermediate: "Intermediate",
+                basic: "Basic",
+                githubLink: "GitHubで見る",
+                demoLink: "アプリを開く",
+                otherLink: "リンク"
+            },
+            en: {
+                viewDetails: "View Details",
+                sendEmail: "Send Email",
+                viewProjects: "View Projects",
+                about: "About Me",
+                skills: "Skills",
+                research: "Research",
+                featuredProjects: "Featured Projects",
+                achievements: "Achievements",
+                experience: "Experience & Education",
+                getInTouch: "Get In Touch",
+                advanced: "Advanced",
+                intermediate: "Intermediate",
+                basic: "Basic",
+                githubLink: "View on GitHub",
+                demoLink: "Open App",
+                otherLink: "Link"
+            }
+        };
+
+        let currentLang = 'ja';
+
+
+        function renderAll(lang) {
+            const data = lang === 'ja' ? portfolioDataJa : portfolioDataEn;
+            const t = translations[lang];
+
+            // Update UI translation strings in HTML
+            document.querySelector('#about h2').textContent = t.about;
+            document.querySelector('#skills h2').textContent = t.skills;
+            document.querySelector('#research h2').textContent = t.research;
+            document.querySelector('#projects h2').textContent = t.featuredProjects;
+            document.querySelector('#achievements h2').textContent = t.achievements;
+            document.querySelector('#experience h2').textContent = t.experience;
+            document.querySelector('#contact h2').textContent = t.getInTouch;
+
+            const skillsLegends = document.querySelectorAll('#skills .glass-button div');
+            if (skillsLegends.length >= 3) {
+                skillsLegends[0].innerHTML = `<div class="w-3 h-3 rounded-full bg-appleBlue/20 border border-appleBlue/30"></div>${t.advanced}`;
+                skillsLegends[1].innerHTML = `<div class="w-3 h-3 rounded-full bg-appleBlue/5 border border-appleBlue/10"></div>${t.intermediate}`;
+                skillsLegends[2].innerHTML = `<div class="w-3 h-3 rounded-full bg-white/20 border border-white/30"></div>${t.basic}`;
+            }
+
+            document.getElementById('contact-email-btn').innerHTML = `<i class="fa-regular fa-envelope mr-2"></i> ${t.sendEmail}`;
+            document.getElementById('hero-actions').innerHTML = `<a href="#projects" class="px-8 py-3.5 bg-appleDark text-white font-medium rounded-full hover:bg-black transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">${t.viewProjects}</a>`;
+
             // 基本情報
-            document.title = `Portfolio | ${portfolioData.profile.name}`;
-            document.getElementById('nav-logo').textContent = `${portfolioData.profile.firstName}.`;
-            document.getElementById('hero-greeting').textContent = portfolioData.profile.greeting;
-            document.getElementById('hero-name').textContent = portfolioData.profile.name;
-            document.getElementById('hero-en-name').textContent = portfolioData.profile.englishName;
-            document.getElementById('hero-title').textContent = portfolioData.profile.title;
-            document.getElementById('hero-description').textContent = portfolioData.profile.description;
-            document.getElementById('hero-image').src = portfolioData.profile.image;
-            document.getElementById('footer-name').textContent = portfolioData.profile.name;
+            document.title = `Portfolio | ${data.profile.name}`;
+            document.getElementById('nav-logo').textContent = `${data.profile.firstName}.`;
+            document.getElementById('hero-greeting').textContent = data.profile.greeting;
+            document.getElementById('hero-name').textContent = data.profile.name;
+            document.getElementById('hero-en-name').textContent = data.profile.englishName;
+            document.getElementById('hero-title').textContent = data.profile.title;
+            document.getElementById('hero-description').textContent = data.profile.description;
+            document.getElementById('hero-image').src = data.profile.image;
+            document.getElementById('footer-name').textContent = data.profile.name;
             document.getElementById('current-year').textContent = new Date().getFullYear();
-            document.getElementById('hero-actions').innerHTML = `<a href="#projects" class="px-8 py-3.5 bg-appleDark text-white font-medium rounded-full hover:bg-black transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">プロジェクトを見る</a>`;
-            document.getElementById('about-content').innerHTML = portfolioData.about;
+            document.getElementById('about-content').innerHTML = data.about;
 
             // Skills
             const skillsContainer = document.getElementById('skills-container');
+            skillsContainer.innerHTML = '';
             const levelStyles = { 3: 'bg-appleBlue/20 border-appleBlue/30 hover:bg-appleBlue/30', 2: 'bg-appleBlue/5 border-appleBlue/10 hover:bg-appleBlue/15', 1: 'bg-white/20 border-white/30 hover:bg-white/40' };
-            portfolioData.skills.forEach(skillGroup => {
+            data.skills.forEach(skillGroup => {
                 const itemsHtml = skillGroup.items.map(item => `<div class="p-4 rounded-xl border transition-all duration-200 ${levelStyles[item.level]}"><div class="flex items-center justify-between gap-3"><span class="text-sm font-bold text-appleDark truncate">${item.name}</span></div>${item.note ? `<div class="text-[12px] text-appleDark/60 mt-1.5 leading-tight">${item.note}</div>` : ''}</div>`).join('');
                 skillsContainer.innerHTML += `<div class="glass-panel p-6 md:p-8 flex flex-col h-full"><div class="flex items-center gap-4 mb-6"><div class="w-12 h-12 glass-button text-appleBlue rounded-2xl flex items-center justify-center text-xl shadow-sm shrink-0"><i class="${skillGroup.icon}"></i></div><h3 class="text-xl font-bold text-appleDark">${skillGroup.category}</h3></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-3 flex-grow content-start">${itemsHtml}</div></div>`;
             });
 
             // Research
-            const researchContainer = document.getElementById('research-container');
-            portfolioData.research.forEach((item, index) => {
-                researchContainer.innerHTML += `
+            const renderResearchContainer = document.getElementById('research-container');
+            renderResearchContainer.innerHTML = '';
+            data.research.forEach((item, index) => {
+                renderResearchContainer.innerHTML += `
                     <div class="glass-panel p-6 md:p-8 flex flex-col md:flex-row gap-5 md:gap-8 items-start transition-all duration-300 hover:-translate-y-1 hover:shadow-lg hover:bg-white/20 cursor-pointer group" data-research-index="${index}">
                         <div class="w-14 h-14 md:w-16 md:h-16 rounded-2xl glass-button flex items-center justify-center text-appleBlue text-2xl md:text-3xl shrink-0 shadow-sm group-hover:scale-105 transition-transform">
                             <i class="${item.icon}"></i>
@@ -681,7 +1120,7 @@
                             <h3 class="text-xl md:text-2xl font-bold text-appleDark mb-4 group-hover:text-appleBlue transition-colors">${item.title}</h3>
                             <p class="text-appleDark/80 leading-relaxed text-sm md:text-base mb-3">${item.description}</p>
                             <div class="inline-flex items-center text-sm font-medium text-appleBlue bg-appleBlue/10 px-3 py-1.5 rounded-full group-hover:bg-appleBlue/20 transition-colors">
-                                詳細を見る <i class="fa-solid fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition-transform"></i>
+                                ${t.viewDetails} <i class="fa-solid fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition-transform"></i>
                             </div>
                         </div>
                     </div>
@@ -689,12 +1128,13 @@
             });
 
             // Projects
-            const projectsContainer = document.getElementById('projects-container');
-            portfolioData.projects.forEach((project, index) => {
+            const renderProjectsContainer = document.getElementById('projects-container');
+            renderProjectsContainer.innerHTML = '';
+            data.projects.forEach((project, index) => {
                 const techTags = project.techStack.map(tech => `<span class="text-xs font-semibold text-appleDark/80 bg-black/5 px-2.5 py-1 rounded-md border border-black/5">${tech}</span>`).join('');
                 const links = project.links.map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="w-10 h-10 flex items-center justify-center glass-button rounded-full text-appleDark hover:text-appleBlue hover:scale-105 transition-all relative z-10 shadow-sm" aria-label="${link.type}"><i class="${link.icon}"></i></a>`).join('');
                 
-                projectsContainer.innerHTML += `
+                renderProjectsContainer.innerHTML += `
                     <div class="glass-panel p-2 flex flex-col group cursor-pointer hover:-translate-y-2 hover:shadow-xl transition-all duration-300 hover:bg-white/20" data-project-index="${index}">
                         <div class="relative h-48 md:h-56 overflow-hidden rounded-[1.2rem] border border-black/5">
                             <img src="${project.image}" alt="${project.title}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
@@ -707,7 +1147,7 @@
                             <div class="flex flex-wrap gap-2 mb-4">${techTags}</div>
                             <div class="flex items-center justify-between mt-auto pt-4 border-t border-black/5">
                                 <div class="inline-flex items-center text-sm font-medium text-appleBlue">
-                                    詳細を見る <i class="fa-solid fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition-transform"></i>
+                                    ${t.viewDetails} <i class="fa-solid fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition-transform"></i>
                                 </div>
                                 <div class="flex items-center gap-3">${links}</div>
                             </div>
@@ -717,10 +1157,44 @@
             });
 
             // Achievements
-            const achievementsContainer = document.getElementById('achievements-container');
-            portfolioData.achievements.forEach((ach, index) => {
-                achievementsContainer.innerHTML += `<div class="glass-panel p-6 sm:p-8 hover:-translate-y-1 hover:shadow-lg hover:bg-white/20 transition-all duration-300 cursor-pointer group flex flex-col h-full" data-achievement-index="${index}"><div class="flex items-start gap-4 sm:gap-6"><div class="flex items-center justify-center w-12 h-12 rounded-full glass-button text-appleBlue shrink-0 group-hover:scale-110 transition-transform shadow-sm"><i class="fa-solid fa-award text-lg"></i></div><div class="flex-grow"><span class="inline-block px-2.5 py-1 bg-appleDark text-white text-[10px] font-bold rounded-md tracking-wider mb-3 shadow-sm">${ach.date}</span><h3 class="text-lg sm:text-xl font-bold text-appleDark mb-2 leading-tight group-hover:text-appleBlue transition-colors">${ach.title}</h3><p class="text-sm text-appleDark/70 leading-relaxed mb-3">${ach.summary}</p><div class="inline-flex items-center text-sm font-medium text-appleBlue bg-appleBlue/10 px-3 py-1.5 rounded-full group-hover:bg-appleBlue/20 transition-colors">詳細を見る <i class="fa-solid fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition-transform"></i></div></div></div></div>`;
+            const renderAchievementsContainer = document.getElementById('achievements-container');
+            renderAchievementsContainer.innerHTML = '';
+            data.achievements.forEach((ach, index) => {
+                renderAchievementsContainer.innerHTML += `<div class="glass-panel p-6 sm:p-8 hover:-translate-y-1 hover:shadow-lg hover:bg-white/20 transition-all duration-300 cursor-pointer group flex flex-col h-full" data-achievement-index="${index}"><div class="flex items-start gap-4 sm:gap-6"><div class="flex items-center justify-center w-12 h-12 rounded-full glass-button text-appleBlue shrink-0 group-hover:scale-110 transition-transform shadow-sm"><i class="fa-solid fa-award text-lg"></i></div><div class="flex-grow"><span class="inline-block px-2.5 py-1 bg-appleDark text-white text-[10px] font-bold rounded-md tracking-wider mb-3 shadow-sm">${ach.date}</span><h3 class="text-lg sm:text-xl font-bold text-appleDark mb-2 leading-tight group-hover:text-appleBlue transition-colors">${ach.title}</h3><p class="text-sm text-appleDark/70 leading-relaxed mb-3">${ach.summary}</p><div class="inline-flex items-center text-sm font-medium text-appleBlue bg-appleBlue/10 px-3 py-1.5 rounded-full group-hover:bg-appleBlue/20 transition-colors">${t.viewDetails} <i class="fa-solid fa-arrow-right ml-1.5 text-xs group-hover:translate-x-1 transition-transform"></i></div></div></div></div>`;
             });
+
+            // Timeline
+            const timelineContainer = document.getElementById('timeline-container');
+            timelineContainer.innerHTML = '';
+            data.timeline.forEach((item) => {
+                timelineContainer.innerHTML += `<div class="relative pl-6 md:pl-10 group"><div class="absolute left-[-13px] top-8 w-6 h-6 glass-button rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 z-10 shadow-sm"><div class="w-2.5 h-2.5 bg-appleBlue rounded-full"></div></div><div class="glass-panel p-6 md:p-8 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:bg-white/20"><div class="flex flex-col md:flex-row md:items-center gap-3 mb-4"><span class="inline-block px-3 py-1 bg-appleDark text-white text-xs font-bold rounded-md tracking-wider w-fit shadow-sm">${item.year}</span><h3 class="text-xl font-bold text-appleDark">${item.title}</h3></div>${item.subtitle ? `<h4 class="text-md font-semibold text-appleGray mb-3">${item.subtitle}</h4>` : ''}<p class="text-appleDark/80 text-sm leading-relaxed">${item.description}</p></div></div>`;
+            });
+            timelineContainer.innerHTML += `<svg class="absolute top-full left-[-9px] w-[16px] h-[14px] text-appleBlue/20 overflow-visible !mt-0" viewBox="0 0 16 14" fill="none"><line x1="8" y1="0" x2="8" y2="12" stroke="currentColor" stroke-width="2" /><path d="M2 6 L8 12 L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>`;
+
+            // Contact
+            document.getElementById('contact-text').textContent = data.contactText;
+            document.getElementById('contact-email-btn').href = `mailto:${data.profile.email}`;
+            const socialLinksContainer = document.getElementById('social-links');
+            socialLinksContainer.innerHTML = '';
+            data.socials.forEach(social => { socialLinksContainer.innerHTML += `<a href="${social.url}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 flex items-center justify-center rounded-full glass-button text-appleDark hover:text-appleBlue hover:scale-110 transition-all shadow-sm" aria-label="${social.name}"><i class="${social.icon} text-xl"></i></a>`; });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Language Detection & Defaulting
+            const browserLang = navigator.language || navigator.userLanguage;
+            if (browserLang && !browserLang.startsWith('ja')) {
+                currentLang = 'en';
+            }
+            renderAll(currentLang);
+
+            // Language Toggle Event
+            const langToggleBtn = document.getElementById('lang-toggle-btn');
+            langToggleBtn.addEventListener('click', () => {
+                currentLang = currentLang === 'ja' ? 'en' : 'ja';
+                renderAll(currentLang);
+            });
+
+
 
             // Modal System
             const modal = document.getElementById('detail-modal');
@@ -754,7 +1228,7 @@
                 
                 modal.classList.remove('hidden');
                 modal.classList.add('flex');
-                document.body.classList.add('modal-open');
+                document.body.classList.add('no-scroll');
 
                 // モーダルが表示(display: flex)されてからスクロール位置をリセットする
                 modalBody.scrollTop = 0;
@@ -773,16 +1247,22 @@
                 setTimeout(() => {
                     modal.classList.add('hidden');
                     modal.classList.remove('flex');
-                    document.body.classList.remove('modal-open');
+                    document.body.classList.remove('no-scroll');
                 }, 300);
             };
 
+
             // Event Listeners for Modals
+            const researchContainer = document.getElementById('research-container');
+            const achievementsContainer = document.getElementById('achievements-container');
+            const projectsContainer = document.getElementById('projects-container');
+
             researchContainer.addEventListener('click', (e) => {
                 const card = e.target.closest('[data-research-index]');
                 if (!card) return;
                 const index = card.getAttribute('data-research-index');
-                const res = portfolioData.research[index];
+                const data = currentLang === 'ja' ? portfolioDataJa : portfolioDataEn;
+                const res = data.research[index];
                 const contentHtml = res.details || `<p>${res.description}</p>`;
                 openModal(res.title, res.period, contentHtml);
             });
@@ -791,7 +1271,8 @@
                 const card = e.target.closest('[data-achievement-index]');
                 if (!card) return;
                 const index = card.getAttribute('data-achievement-index');
-                const ach = portfolioData.achievements[index];
+                const data = currentLang === 'ja' ? portfolioDataJa : portfolioDataEn;
+                const ach = data.achievements[index];
                 openModal(ach.title, ach.date, ach.description);
             });
 
@@ -801,7 +1282,9 @@
                 const card = e.target.closest('[data-project-index]');
                 if (!card) return;
                 const index = card.getAttribute('data-project-index');
-                const proj = portfolioData.projects[index];
+                const data = currentLang === 'ja' ? portfolioDataJa : portfolioDataEn;
+                const proj = data.projects[index];
+                const t = translations[currentLang];
                 
                 let contentHtml = '';
                 
@@ -814,9 +1297,9 @@
                 
                 if (proj.links && proj.links.length > 0) {
                     const linkButtons = proj.links.map(link => {
-                        let text = 'リンク';
-                        if (link.type === 'github') text = 'GitHubで見る';
-                        else if (link.type === 'demo') text = 'アプリを開く';
+                        let text = t.otherLink;
+                        if (link.type === 'github') text = t.githubLink;
+                        else if (link.type === 'demo') text = t.demoLink;
                         
                         return `<a href="${link.url}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center px-5 py-2.5 bg-appleDark text-white hover:bg-black rounded-full text-sm font-medium transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"><i class="${link.icon} mr-2"></i>${text}</a>`;
                     }).join('');
@@ -852,32 +1335,21 @@
                 }
             });
 
-            // Timeline
-            const timelineContainer = document.getElementById('timeline-container');
-            portfolioData.timeline.forEach((item) => {
-                timelineContainer.innerHTML += `<div class="relative pl-6 md:pl-10 group"><div class="absolute left-[-13px] top-8 w-6 h-6 glass-button rounded-full flex items-center justify-center transition-transform duration-300 group-hover:scale-110 z-10 shadow-sm"><div class="w-2.5 h-2.5 bg-appleBlue rounded-full"></div></div><div class="glass-panel p-6 md:p-8 hover:-translate-y-1 transition-all duration-300 hover:shadow-lg hover:bg-white/20"><div class="flex flex-col md:flex-row md:items-center gap-3 mb-4"><span class="inline-block px-3 py-1 bg-appleDark text-white text-xs font-bold rounded-md tracking-wider w-fit shadow-sm">${item.year}</span><h3 class="text-xl font-bold text-appleDark">${item.title}</h3></div>${item.subtitle ? `<h4 class="text-md font-semibold text-appleGray mb-3">${item.subtitle}</h4>` : ''}<p class="text-appleDark/80 text-sm leading-relaxed">${item.description}</p></div></div>`;
-            });
-            timelineContainer.innerHTML += `<svg class="absolute top-full left-[-9px] w-[16px] h-[14px] text-appleBlue/20 overflow-visible !mt-0" viewBox="0 0 16 14" fill="none"><line x1="8" y1="0" x2="8" y2="12" stroke="currentColor" stroke-width="2" /><path d="M2 6 L8 12 L14 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>`;
-
-            // Contact
-            document.getElementById('contact-text').textContent = portfolioData.contactText;
-            document.getElementById('contact-email-btn').href = `mailto:${portfolioData.profile.email}`;
-            const socialLinksContainer = document.getElementById('social-links');
-            portfolioData.socials.forEach(social => { socialLinksContainer.innerHTML += `<a href="${social.url}" target="_blank" rel="noopener noreferrer" class="w-12 h-12 flex items-center justify-center rounded-full glass-button text-appleDark hover:text-appleBlue hover:scale-110 transition-all shadow-sm" aria-label="${social.name}"><i class="${social.icon} text-xl"></i></a>`; });
 
             // Menu Toggle
             const mobileMenuBtn = document.getElementById('mobile-menu-btn');
             const mobileMenu = document.getElementById('mobile-menu');
             const menuIcon = mobileMenuBtn.querySelector('i');
             function toggleMenu() {
+                updateScrollbarWidth();
                 mobileMenu.classList.toggle('hidden');
                 mobileMenu.classList.toggle('flex');
                 if (mobileMenu.classList.contains('hidden')) {
                     menuIcon.classList.replace('fa-xmark', 'fa-bars');
-                    document.body.style.overflow = 'auto';
+                    document.body.classList.remove('no-scroll');
                 } else {
                     menuIcon.classList.replace('fa-bars', 'fa-xmark');
-                    document.body.style.overflow = 'hidden';
+                    document.body.classList.add('no-scroll');
                 }
             }
             mobileMenuBtn.addEventListener('click', toggleMenu);
