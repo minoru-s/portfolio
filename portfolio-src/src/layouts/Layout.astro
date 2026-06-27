@@ -20,6 +20,9 @@ const { title, lang = 'ja', description = "Minoru SAITO's Portfolio — R&D Engi
     <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
     <title>{title} | Minoru SAITO</title>
 
+    <!-- Prevent white flash before CSS loads -->
+    <style is:inline>body{background:#f5f5f7}</style>
+
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
