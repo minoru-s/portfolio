@@ -1,0 +1,115 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import { getCollection } from 'astro:content';
+import * as data from '../data/ja';
+
+const projects = (await getCollection('projects', ({ id }) => id.startsWith('ja/')))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const research = (await getCollection('research', ({ id }) => id.startsWith('ja/')))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const posts = (await getCollection('blog'))
+  .filter(p => !p.data.draft)
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime());
+
+const b = import.meta.env.BASE_URL;
+
+const sections = [
+  {
+    label: 'Home',
+    icon: 'fa-solid fa-house',
+    href: b,
+    children: [],
+  },
+  {
+    label: 'Research',
+    icon: 'fa-solid fa-flask',
+    href: `${b}research/`,
+    children: research.map(r => ({
+      label: r.data.title,
+      href: `${b}research/${r.id.replace('ja/', '')}/`,
+    })),
+  },
+  {
+    label: 'Projects',
+    icon: 'fa-solid fa-code',
+    href: `${b}projects/`,
+    children: projects.map(p => ({
+      label: p.data.title,
+      href: `${b}projects/${p.id.replace('ja/', '')}/`,
+    })),
+  },
+  {
+    label: 'Achievements',
+    icon: 'fa-solid fa-trophy',
+    href: `${b}achievements/`,
+    children: [],
+  },
+  {
+    label: 'Blog',
+    icon: 'fa-solid fa-pen-nib',
+    href: `${b}blog/`,
+    children: posts.map(p => ({
+      label: p.data.title,
+      href: `${b}blog/${p.id}/`,
+    })),
+  },
+];
+---
+
+<Layout title="404 - ページが見つかりません" lang="ja">
+  <Header currentLang="ja" />
+
+  <main class="relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+    <div class="max-w-4xl mx-auto">
+
+      <!-- 404 hero -->
+      <div class="glass-panel px-10 md:px-14 py-16 md:py-20 mb-10 text-center">
+        <p class="text-8xl font-black text-appleDark/10 mb-2 leading-none select-none">404</p>
+        <h1 class="text-2xl font-bold text-appleDark mb-3">ページが見つかりませんでした</h1>
+        <p class="text-appleGray mb-8">
+          URLが変更されたか、削除された可能性があります。<br>
+          以下のサイトマップからお探しのページへどうぞ。
+        </p>
+        <a href={b}
+           class="inline-flex items-center px-6 py-3 bg-appleDark text-white rounded-full text-sm font-semibold hover:bg-black transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+          <i class="fa-solid fa-house mr-2"></i>ホームへ戻る
+        </a>
+      </div>
+
+      <!-- Sitemap -->
+      <div class="glass-panel p-8 md:p-10">
+        <h2 class="text-lg font-bold text-appleDark mb-6 flex items-center gap-2">
+          <i class="fa-solid fa-sitemap text-appleBlue"></i>サイトマップ
+        </h2>
+        <div class="grid sm:grid-cols-2 gap-x-8 gap-y-6">
+          {sections.map(section => (
+            <div>
+              <a href={section.href}
+                 class="inline-flex items-center gap-2 font-semibold text-appleDark hover:text-appleBlue transition-colors mb-2">
+                <i class={`${section.icon} text-appleBlue text-xs w-4 text-center`}></i>
+                {section.label}
+              </a>
+              {section.children.length > 0 && (
+                <ul class="pl-6 space-y-1 border-l border-black/8">
+                  {section.children.map(child => (
+                    <li>
+                      <a href={child.href}
+                         class="text-sm text-appleGray hover:text-appleBlue transition-colors line-clamp-1">
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <Footer socials={data.socials} lang="ja" />
+</Layout>

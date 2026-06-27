@@ -1,0 +1,74 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import { getCollection } from 'astro:content';
+import * as data from '../../data/ja';
+
+const projects = (await getCollection('projects', ({ id }) => id.startsWith('ja/')))
+  .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+const b = import.meta.env.BASE_URL;
+---
+
+<Layout title="Projects" lang="ja">
+  <Header currentLang="ja" />
+
+  <main class="relative z-10 pt-28 pb-20"
+        style="background: linear-gradient(180deg, rgba(16,185,129,0.09) 0%, rgba(16,185,129,0.03) 25%, transparent 50%);">
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 pb-10">
+      <a href={b} class="inline-flex items-center text-sm text-appleBlue hover:underline font-medium mb-6">
+        <i class="fa-solid fa-arrow-left mr-2"></i>ホームへ
+      </a>
+      <div class="flex items-center gap-5 mt-2">
+        <div class="w-16 h-16 flex items-center justify-center rounded-2xl shrink-0"
+             style="background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25);">
+          <i class="fa-solid fa-code text-2xl" style="color: #059669;"></i>
+        </div>
+        <div>
+          <h1 class="text-4xl font-bold text-appleDark tracking-tight">Projects</h1>
+          <p class="text-appleGray mt-1">これまでに開発・運営してきたプロジェクト — 全 {projects.length} 件</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mt-0 fade-in-section">
+        {projects.map(project => (
+          <ProjectCard
+            title={project.data.title}
+            summary={project.data.summary}
+            image={project.data.hero}
+            stack={project.data.stack}
+            highlights={project.data.highlights}
+            href={`${b}projects/${project.id.replace('ja/', '')}/`}
+            directLink={true}
+          />
+        ))}
+      </div>
+
+      <!-- ⑤ Continue exploring -->
+      <div class="mt-20 pt-10 border-t border-black/5 text-center fade-in-section">
+        <p class="text-xs text-appleGray mb-5 tracking-wider uppercase">他のコンテンツを探索する</p>
+        <div class="flex flex-wrap gap-3 justify-center">
+          <a href={`${b}research/`} class="inline-flex items-center px-5 py-2.5 glass-button rounded-full text-sm font-medium text-appleDark hover:text-appleBlue transition-all">
+            <i class="fa-solid fa-flask mr-2 text-xs"></i>Research
+          </a>
+          <a href={`${b}achievements/`} class="inline-flex items-center px-5 py-2.5 glass-button rounded-full text-sm font-medium text-appleDark hover:text-appleBlue transition-all">
+            <i class="fa-solid fa-trophy mr-2 text-xs"></i>Achievements
+          </a>
+          <a href={`${b}blog/`} class="inline-flex items-center px-5 py-2.5 glass-button rounded-full text-sm font-medium text-appleDark hover:text-appleBlue transition-all">
+            <i class="fa-solid fa-pen-nib mr-2 text-xs"></i>Blog
+          </a>
+          <a href={b} class="inline-flex items-center px-5 py-2.5 glass-button rounded-full text-sm font-medium text-appleDark hover:text-appleBlue transition-all">
+            <i class="fa-solid fa-house mr-2 text-xs"></i>ホームへ
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <Footer socials={data.socials} lang="ja" />
+</Layout>

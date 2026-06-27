@@ -1,0 +1,43 @@
+---
+import { getCollection, render } from 'astro:content';
+import DetailLayout from '../../../layouts/DetailLayout.astro';
+
+export async function getStaticPaths() {
+  const research = (await getCollection('research', ({ id }) => id.startsWith('en/')))
+    .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+  const b = import.meta.env.BASE_URL;
+  return research.map((item, idx) => ({
+    params: { slug: item.id.replace('en/', '') },
+    props: {
+      item,
+      prevItem: idx > 0
+        ? { title: research[idx - 1].data.title, href: `${b}en/research/${research[idx - 1].id.replace('en/', '')}/` }
+        : null,
+      nextItem: idx < research.length - 1
+        ? { title: research[idx + 1].data.title, href: `${b}en/research/${research[idx + 1].id.replace('en/', '')}/` }
+        : null,
+    },
+  }));
+}
+
+const { item, prevItem, nextItem } = Astro.props;
+const { Content } = await render(item);
+---
+
+<DetailLayout
+  title={item.data.title}
+  summary={item.data.summary}
+  lang="en"
+  type="research"
+  hero={item.data.hero}
+  stack={item.data.stack}
+  period={item.data.period}
+  organization={item.data.organization}
+  role={item.data.role}
+  tags={item.data.tags}
+  related={item.data.related}
+  prevItem={prevItem}
+  nextItem={nextItem}
+>
+  <Content />
+</DetailLayout>

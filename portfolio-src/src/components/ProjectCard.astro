@@ -1,0 +1,126 @@
+---
+interface Props {
+  title: string;
+  summary: string;
+  image?: string;
+  href: string;
+  stack: string[];
+  highlights?: string[];
+  isResearch?: boolean;
+  ctaLabel?: string;
+  directLink?: boolean;
+}
+
+const {
+  title, summary, image, href, stack,
+  highlights = [], isResearch = false,
+  ctaLabel = 'さらに詳しく',
+  directLink = false,
+} = Astro.props;
+
+const b = import.meta.env.BASE_URL;
+const resolvedImage = image?.startsWith('/') ? `${b}${image.slice(1)}` : image;
+const modalData = JSON.stringify({ title, summary, image: resolvedImage, href, stack, highlights, ctaLabel });
+const cardClass = "flex flex-col glass-panel overflow-hidden cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group";
+---
+
+{directLink ? (
+  <a href={href} class={cardClass} style="text-decoration:none;color:inherit;">
+    <div class="h-48 overflow-hidden relative bg-appleLight/30 shrink-0">
+      {image ? (
+        <img
+          src={resolvedImage}
+          alt={title}
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onerror={`this.parentElement.innerHTML='<div class="w-full h-full flex items-center justify-center" style="color:rgba(134,134,139,0.4)"><i class="fa-solid fa-image" style="font-size:2.25rem"></i></div>'`}
+        />
+      ) : (
+        <div class="w-full h-full flex items-center justify-center text-appleGray/40">
+          <i class={isResearch ? "fa-solid fa-flask text-4xl" : "fa-solid fa-code text-4xl"}></i>
+        </div>
+      )}
+      {isResearch && (
+        <span class="absolute top-3 left-3 px-2.5 py-1 bg-appleBlue/90 text-white text-[10px] font-bold rounded-full uppercase tracking-wide backdrop-blur-sm">
+          Research
+        </span>
+      )}
+    </div>
+    <div class="p-6 flex flex-col flex-grow">
+      <h3 class="text-lg font-bold mb-2 text-appleDark group-hover:text-appleBlue transition-colors leading-tight">
+        {title}
+      </h3>
+      <div class="flex-grow overflow-hidden min-h-0 mb-4">
+        <p class="text-sm text-appleDark/70 line-clamp-3 leading-relaxed">{summary}</p>
+      </div>
+      <div class="flex items-center justify-between mt-auto">
+        <div class="flex flex-wrap gap-2">
+          {stack.slice(0, 3).map(tech => (
+            <span class="px-2.5 py-1 glass-button rounded-full text-xs font-medium text-appleDark/70">{tech}</span>
+          ))}
+          {stack.length > 3 && (
+            <span class="px-2.5 py-1 glass-button rounded-full text-xs font-medium text-appleDark/70">+{stack.length - 3}</span>
+          )}
+        </div>
+        <i class="fa-solid fa-arrow-right text-appleGray/50 text-sm group-hover:text-appleBlue group-hover:translate-x-0.5 transition-all shrink-0 ml-3"></i>
+      </div>
+    </div>
+  </a>
+) : (
+  <div
+    class={cardClass}
+    data-modal={modalData}
+    role="button"
+    tabindex="0"
+    aria-haspopup="dialog"
+  >
+    <div class="h-48 overflow-hidden relative bg-appleLight/30 shrink-0">
+      {image ? (
+        <img
+          src={resolvedImage}
+          alt={title}
+          class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          onerror={`this.parentElement.innerHTML='<div class="w-full h-full flex items-center justify-center" style="color:rgba(134,134,139,0.4)"><i class="fa-solid fa-image" style="font-size:2.25rem"></i></div>'`}
+        />
+      ) : (
+        <div class="w-full h-full flex items-center justify-center text-appleGray/40">
+          <i class={isResearch ? "fa-solid fa-flask text-4xl" : "fa-solid fa-code text-4xl"}></i>
+        </div>
+      )}
+      {isResearch && (
+        <span class="absolute top-3 left-3 px-2.5 py-1 bg-appleBlue/90 text-white text-[10px] font-bold rounded-full uppercase tracking-wide backdrop-blur-sm">
+          Research
+        </span>
+      )}
+    </div>
+    <div class="p-6 flex flex-col flex-grow">
+      <h3 class="text-lg font-bold mb-2 text-appleDark group-hover:text-appleBlue transition-colors leading-tight">
+        {title}
+      </h3>
+      <div class="flex-grow overflow-hidden min-h-0 mb-4">
+        <p class="text-sm text-appleDark/70 line-clamp-3 leading-relaxed">{summary}</p>
+      </div>
+      <div class="flex items-center justify-between mt-auto">
+        <div class="flex flex-wrap gap-2">
+          {stack.slice(0, 3).map(tech => (
+            <span class="px-2.5 py-1 glass-button rounded-full text-xs font-medium text-appleDark/70">{tech}</span>
+          ))}
+          {stack.length > 3 && (
+            <span class="px-2.5 py-1 glass-button rounded-full text-xs font-medium text-appleDark/70">+{stack.length - 3}</span>
+          )}
+        </div>
+        <i class="fa-solid fa-arrow-right text-appleGray/50 text-sm group-hover:text-appleBlue group-hover:translate-x-0.5 transition-all shrink-0 ml-3"></i>
+      </div>
+    </div>
+  </div>
+)}
+
+<script is:inline>
+  document.querySelectorAll('[data-modal][role="button"]').forEach(function(el) {
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        el.click();
+      }
+    });
+  });
+</script>

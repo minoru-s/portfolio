@@ -1,0 +1,7 @@
+# macOS
+.DS_Store
+
+# Astro
+portfolio-src/dist/
+portfolio-src/.astro/
+portfolio-src/node_modules/

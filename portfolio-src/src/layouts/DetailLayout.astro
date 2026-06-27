@@ -1,0 +1,218 @@
+---
+import Layout from './Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import * as jaData from '../data/ja';
+import * as enData from '../data/en';
+
+interface Props {
+  title: string;
+  summary: string;
+  lang: 'ja' | 'en';
+  type: 'project' | 'research';
+  hero?: string;
+  stack?: string[];
+  period?: string;
+  organization?: string;
+  role?: string;
+  demoUrl?: string;
+  repoUrl?: string;
+  tags?: string[];
+  related?: string[];
+  prevItem?: { title: string; href: string } | null;
+  nextItem?: { title: string; href: string } | null;
+}
+
+const {
+  title, summary, lang, type, hero, stack = [], period,
+  organization, role, demoUrl, repoUrl, tags = [], related = [],
+  prevItem = null, nextItem = null,
+} = Astro.props;
+
+const data = lang === 'ja' ? jaData : enData;
+const isJa = lang === 'ja';
+
+const b = import.meta.env.BASE_URL;
+const listHref = isJa
+  ? (type === 'project' ? `${b}projects/` : `${b}research/`)
+  : (type === 'project' ? `${b}en/projects/` : `${b}en/research/`);
+const homeHref = isJa ? b : `${b}en/`;
+// Anchor to the relevant home section (so "もどる" returns to where the user opened this)
+const homeAnchorHref = isJa
+  ? (type === 'project' ? `${b}#projects` : `${b}#research`)
+  : (type === 'project' ? `${b}en/#projects` : `${b}en/#research`);
+const homeLabel = isJa ? 'ホーム' : 'Home';
+const listLabel = type === 'project' ? 'Projects' : 'Research';
+const demoLabel = isJa ? 'デモを見る' : 'View Demo';
+const prevLabel = isJa ? '前へ' : 'Prev';
+const nextLabel = isJa ? '次へ' : 'Next';
+
+const breadcrumbs = [
+  { label: homeLabel, href: homeHref },
+  { label: listLabel, href: listHref },
+  { label: title },
+];
+---
+
+<Layout title={title} lang={lang}>
+  <Header currentLang={lang} />
+
+  <main class="relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+    <article class="max-w-3xl mx-auto">
+
+      <!-- Breadcrumb -->
+      <Breadcrumb items={breadcrumbs} />
+
+      <!-- Header card -->
+      <div class="glass-panel p-8 md:p-10 mb-8">
+        {period && (
+          <p class="text-sm font-semibold text-appleBlue mb-2 tracking-wide">
+            <i class="fa-regular fa-calendar mr-1.5"></i>{period}
+          </p>
+        )}
+        <h1 class="text-3xl sm:text-4xl font-bold text-appleDark mb-4 leading-tight">{title}</h1>
+        <p class="text-lg text-appleDark/70 mb-6 leading-relaxed">{summary}</p>
+
+        {organization && (
+          <p class="text-sm text-appleGray mb-1"><i class="fa-solid fa-building mr-2"></i>{organization}</p>
+        )}
+        {role && (
+          <p class="text-sm text-appleGray mb-4"><i class="fa-solid fa-user mr-2"></i>{role}</p>
+        )}
+
+        {stack.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-6">
+            {stack.map(tech => (
+              <span class="px-3 py-1.5 glass-button rounded-full text-xs font-medium text-appleDark/70">{tech}</span>
+            ))}
+          </div>
+        )}
+
+        {tags.length > 0 && (
+          <div class="flex flex-wrap gap-2 mb-6">
+            {tags.map(tag => (
+              <span class="px-2.5 py-1 bg-appleBlue/10 text-appleBlue rounded-full text-xs font-medium">#{tag}</span>
+            ))}
+          </div>
+        )}
+
+        {(demoUrl || repoUrl) && (
+          <div class="flex flex-wrap gap-3">
+            {demoUrl && (
+              <a href={demoUrl} target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center px-5 py-2.5 bg-appleBlue text-white rounded-full text-sm font-medium hover:bg-appleBlue/90 transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i>{demoLabel}
+              </a>
+            )}
+            {repoUrl && (
+              <a href={repoUrl} target="_blank" rel="noopener noreferrer"
+                 class="inline-flex items-center px-5 py-2.5 bg-appleDark text-white rounded-full text-sm font-medium hover:bg-black transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5">
+                <i class="fa-brands fa-github mr-2"></i>GitHub
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+
+      <!-- Hero image -->
+      {hero && (
+        <div class="mb-8 rounded-2xl overflow-hidden border border-white/50 shadow-md">
+          <img src={hero.startsWith('/') ? `${b}${hero.slice(1)}` : hero} alt={title} class="w-full object-cover max-h-96"
+               onerror="this.parentElement.style.display='none'" />
+        </div>
+      )}
+
+      <!-- Body content -->
+      <div class="glass-panel p-8 md:p-10 text-appleDark/90 leading-relaxed mb-8">
+        <slot />
+      </div>
+
+      <!-- Prev / Next navigation -->
+      {(prevItem || nextItem) && (
+        <nav class="grid grid-cols-2 gap-4 mb-8" aria-label="記事ナビゲーション">
+          <div>
+            {prevItem && (
+              <a href={prevItem.href}
+                 class="flex flex-col glass-panel p-4 hover:-translate-y-0.5 hover:shadow-md transition-all group h-full">
+                <span class="text-xs font-semibold text-appleBlue mb-1 flex items-center gap-1.5">
+                  <i class="fa-solid fa-arrow-left text-[10px]"></i>{prevLabel}
+                </span>
+                <span class="text-sm font-medium text-appleDark group-hover:text-appleBlue transition-colors leading-snug line-clamp-2">
+                  {prevItem.title}
+                </span>
+              </a>
+            )}
+          </div>
+          <div>
+            {nextItem && (
+              <a href={nextItem.href}
+                 class="flex flex-col glass-panel p-4 hover:-translate-y-0.5 hover:shadow-md transition-all group text-right h-full">
+                <span class="text-xs font-semibold text-appleBlue mb-1 flex items-center justify-end gap-1.5">
+                  {nextLabel}<i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </span>
+                <span class="text-sm font-medium text-appleDark group-hover:text-appleBlue transition-colors leading-snug line-clamp-2">
+                  {nextItem.title}
+                </span>
+              </a>
+            )}
+          </div>
+        </nav>
+      )}
+
+      <!-- Bottom navigation: back + list (referrer-aware via JS) -->
+      <div class="mt-2">
+        <div id="detail-bottom-nav" class="flex flex-wrap gap-3 justify-center">
+          <a id="btn-home" href={homeAnchorHref}
+             class="inline-flex items-center px-6 py-3 glass-button rounded-full text-sm font-medium text-appleDark hover:text-appleBlue transition-all">
+            <i class="fa-solid fa-chevron-left mr-2 text-xs"></i>{isJa ? 'もどる' : 'Back'}
+          </a>
+          <a id="btn-list" href={listHref}
+             class="inline-flex items-center px-6 py-3 glass-button rounded-full text-sm font-medium text-appleDark hover:text-appleBlue transition-all">
+            <i class="fa-solid fa-arrow-left mr-2 text-xs"></i>{listLabel}{isJa ? '一覧へ' : ' List'}
+          </a>
+        </div>
+      </div>
+
+      <script define:vars={{ homeAnchorHref, homeHref, listHref, isJa }}>
+      (function() {
+        var ref = document.referrer;
+        var btnHome = document.getElementById('btn-home');
+        var btnList = document.getElementById('btn-list');
+        var nav = document.getElementById('detail-bottom-nav');
+        if (!ref || !btnHome || !btnList || !nav) return;
+        var path = ref.replace(/^https?:\/\/[^/]+/, '');
+        // Strip base path so comparisons work regardless of base URL
+        var base = homeHref.replace(/\/$/, '');
+        var pathRel = path.startsWith(base + '/') ? path.slice(base.length) : (path === base ? '/' : path);
+        var segments = pathRel.split('/').filter(Boolean);
+        var isListPage = segments.length === 1;
+        var isListRef = isListPage && (pathRel.includes('/projects') || pathRel.includes('/research') || pathRel.includes('/achievements'));
+        var isHomeRef = pathRel === '/' || pathRel === '';
+        var solidStyle = 'background:#1d1d1f;color:#fff;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.15);';
+        var makePrimary = function(el) {
+          el.classList.remove('glass-button');
+          el.style.cssText = solidStyle + 'display:inline-flex;align-items:center;padding:12px 24px;border-radius:9999px;font-size:0.875rem;font-weight:600;text-decoration:none;color:#fff;';
+        };
+        var setHomeLabel = function(label) {
+          btnHome.href = homeHref;
+          btnHome.innerHTML = '<i class="fa-solid fa-house" style="margin-right:8px;font-size:0.75rem;"></i>' + label;
+        };
+        if (isListRef) {
+          makePrimary(btnList);
+          nav.prepend(btnList);
+          setHomeLabel(isJa ? 'ホームへ' : 'Home');
+        } else if (isHomeRef) {
+          makePrimary(btnHome); // "もどる" with section anchor
+        } else {
+          // Came from another detail page (prev/next) or unknown
+          setHomeLabel(isJa ? 'ホームへ' : 'Home');
+        }
+      })();
+      </script>
+
+    </article>
+  </main>
+
+  <Footer socials={data.socials} lang={lang} />
+</Layout>

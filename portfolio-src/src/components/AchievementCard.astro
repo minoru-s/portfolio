@@ -1,0 +1,41 @@
+---
+interface Props {
+  idx: number;
+  title: string;
+  date: string;
+  summary: string;
+}
+
+const { idx, title, date, summary } = Astro.props;
+---
+
+<div
+  class="glass-panel p-6 cursor-pointer hover:-translate-y-1 hover:shadow-xl transition-all duration-300 group"
+  data-achievement-idx={idx}
+  role="button"
+  tabindex="0"
+  aria-haspopup="dialog"
+>
+  <div class="flex items-start gap-4">
+    <div class="shrink-0 w-10 h-10 flex items-center justify-center glass-button rounded-xl text-appleBlue text-sm mt-0.5">
+      <i class="fa-solid fa-trophy"></i>
+    </div>
+    <div class="flex-1 min-w-0">
+      <span class="text-xs font-bold text-appleBlue tracking-wider">{date}</span>
+      <h3 class="font-bold text-appleDark mt-0.5 leading-snug group-hover:text-appleBlue transition-colors">{title}</h3>
+      <p class="text-sm text-appleDark/70 mt-1 leading-relaxed">{summary}</p>
+    </div>
+    <i class="fa-solid fa-arrow-right text-appleGray/50 text-sm shrink-0 mt-1 group-hover:text-appleBlue group-hover:translate-x-0.5 transition-all"></i>
+  </div>
+</div>
+
+<script is:inline>
+  document.querySelectorAll('[data-achievement-idx][role="button"]').forEach(function(el) {
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        el.click();
+      }
+    });
+  });
+</script>

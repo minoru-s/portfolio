@@ -1,0 +1,89 @@
+---
+interface Props {
+  socials: Array<{ name: string; url: string; icon: string }>;
+  lang?: 'ja' | 'en';
+}
+const { socials, lang = 'ja' } = Astro.props;
+const isJa = lang === 'ja';
+const b = import.meta.env.BASE_URL;
+const base = isJa ? b.slice(0, -1) : `${b}en`;
+const year = new Date().getFullYear();
+
+const navItems = [
+  { href: isJa ? b : `${b}en/`,   label: 'Home' },
+  { href: `${base}/research/`,      label: 'Research' },
+  { href: `${base}/projects/`,      label: 'Projects' },
+  { href: `${base}/achievements/`,  label: 'Achievements' },
+  ...(isJa ? [{ href: `${b}blog/`, label: 'Blog' }] : []),
+  { href: `${base}/#contact`,       label: isJa ? 'Contact' : 'Contact' },
+];
+---
+
+<footer class="relative z-10 border-t border-black/8 mt-12">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10">
+
+      <!-- Brand -->
+      <div class="col-span-2 md:col-span-1">
+        <p class="text-lg font-bold text-appleDark mb-1">Portfolio.</p>
+        <p class="text-sm text-appleGray leading-relaxed">
+          Minoru SAITO<br>
+          {isJa ? '東京科学大学大学院 M1' : 'M1 @ IST, Tokyo'}
+        </p>
+      </div>
+
+      <!-- Navigate -->
+      <div>
+        <p class="text-[10px] font-bold text-appleDark/40 tracking-[0.12em] uppercase mb-4">Navigate</p>
+        <ul class="space-y-2.5">
+          {navItems.map(item => (
+            <li>
+              <a href={item.href} class="text-sm text-appleGray hover:text-appleBlue transition-colors">
+                {item.label}
+              </a>
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      <!-- Connect -->
+      <div>
+        <p class="text-[10px] font-bold text-appleDark/40 tracking-[0.12em] uppercase mb-4">Connect</p>
+        <div class="flex gap-3 mb-5">
+          {socials.map(s => (
+            <a href={s.url} target="_blank" rel="noopener noreferrer" aria-label={s.name}
+               class="w-9 h-9 flex items-center justify-center glass-button rounded-full text-appleGray hover:text-appleBlue hover:scale-110 transition-all">
+              <i class={s.icon}></i>
+            </a>
+          ))}
+        </div>
+        <a href={`mailto:saito.minoru.info@gmail.com`}
+           class="inline-flex items-center text-sm text-appleGray hover:text-appleBlue transition-colors">
+          <i class="fa-regular fa-envelope mr-2 text-xs"></i>
+          {isJa ? 'メールを送る' : 'Send Email'}
+        </a>
+      </div>
+
+      <!-- Language -->
+      <div>
+        <p class="text-[10px] font-bold text-appleDark/40 tracking-[0.12em] uppercase mb-4">Language</p>
+        <div class="space-y-2">
+          <a href={b} class={`block text-sm transition-colors ${!isJa ? 'text-appleGray hover:text-appleBlue' : 'text-appleBlue font-semibold'}`}>
+            <i class="fa-solid fa-check text-xs mr-1.5 opacity-0" class:list={[{ 'opacity-100': isJa }]}></i>
+            日本語
+          </a>
+          <a href={`${b}en/`} class={`block text-sm transition-colors ${isJa ? 'text-appleGray hover:text-appleBlue' : 'text-appleBlue font-semibold'}`}>
+            <i class="fa-solid fa-check text-xs mr-1.5 opacity-0" class:list={[{ 'opacity-100': !isJa }]}></i>
+            English
+          </a>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="border-t border-black/5 pt-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-appleGray">
+      <p>&copy; {year} Minoru SAITO. All rights reserved.</p>
+      <p>{isJa ? 'Astro + Tailwind CSS で構築' : 'Built with Astro + Tailwind CSS'}</p>
+    </div>
+  </div>
+</footer>

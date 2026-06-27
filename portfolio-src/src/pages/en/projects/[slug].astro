@@ -1,0 +1,43 @@
+---
+import { getCollection, render } from 'astro:content';
+import DetailLayout from '../../../layouts/DetailLayout.astro';
+
+export async function getStaticPaths() {
+  const projects = (await getCollection('projects', ({ id }) => id.startsWith('en/')))
+    .sort((a, b) => (a.data.order ?? 99) - (b.data.order ?? 99));
+  const b = import.meta.env.BASE_URL;
+  return projects.map((project, idx) => ({
+    params: { slug: project.id.replace('en/', '') },
+    props: {
+      project,
+      prevItem: idx > 0
+        ? { title: projects[idx - 1].data.title, href: `${b}en/projects/${projects[idx - 1].id.replace('en/', '')}/` }
+        : null,
+      nextItem: idx < projects.length - 1
+        ? { title: projects[idx + 1].data.title, href: `${b}en/projects/${projects[idx + 1].id.replace('en/', '')}/` }
+        : null,
+    },
+  }));
+}
+
+const { project, prevItem, nextItem } = Astro.props;
+const { Content } = await render(project);
+---
+
+<DetailLayout
+  title={project.data.title}
+  summary={project.data.summary}
+  lang="en"
+  type="project"
+  hero={project.data.hero}
+  stack={project.data.stack}
+  period={project.data.period}
+  demoUrl={project.data.demoUrl}
+  repoUrl={project.data.repoUrl}
+  tags={project.data.tags}
+  related={project.data.related}
+  prevItem={prevItem}
+  nextItem={nextItem}
+>
+  <Content />
+</DetailLayout>

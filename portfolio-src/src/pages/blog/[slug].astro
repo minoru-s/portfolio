@@ -1,0 +1,182 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import Footer from '../../components/Footer.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import * as jaData from '../../data/ja';
+
+export async function getStaticPaths() {
+  const b = import.meta.env.BASE_URL;
+  const posts = (await getCollection('blog')).filter(p => !p.data.draft);
+  return posts
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+    .map((post, idx, arr) => ({
+      params: { slug: post.id },
+      props: {
+        post,
+        prevPost: idx < arr.length - 1 ? { title: arr[idx + 1].data.title, href: `${b}blog/${arr[idx + 1].id}/` } : null,
+        nextPost: idx > 0 ? { title: arr[idx - 1].data.title, href: `${b}blog/${arr[idx - 1].id}/` } : null,
+      },
+    }));
+}
+
+const { post, prevPost, nextPost } = Astro.props;
+const { Content } = await render(post);
+const { title, summary, date, tags, thumbnail, hero, draft } = post.data;
+
+const formattedDate = date.toLocaleDateString('ja-JP', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const heroImg = thumbnail || hero;
+const b = import.meta.env.BASE_URL;
+const resolvedHeroImg = heroImg?.startsWith('/') ? `${b}${heroImg.slice(1)}` : heroImg;
+---
+
+<Layout title={title} lang="ja">
+  <Header currentLang="ja" />
+
+  <main class="relative z-10 pt-32 pb-20 px-4 sm:px-6 lg:px-8">
+    <article class="max-w-3xl mx-auto">
+
+      <!-- Breadcrumb -->
+      <Breadcrumb items={[
+        { label: 'Home', href: b },
+        { label: 'Blog', href: `${b}blog/` },
+        { label: title },
+      ]} />
+
+      <!-- Header card -->
+      <div class="glass-panel p-8 md:p-10 mb-8">
+        <div class="flex flex-wrap gap-1.5 mb-4">
+          {tags.map(tag => (
+            <span class="text-[10px] font-semibold px-2.5 py-1 rounded-full" style="background:rgba(124,58,237,0.1);color:#7c3aed;">{tag}</span>
+          ))}
+        </div>
+        <h1 class="text-2xl sm:text-3xl font-bold text-appleDark mb-4 leading-tight">{title}</h1>
+        <p class="text-appleGray text-sm">{formattedDate}</p>
+      </div>
+
+      <!-- Hero image (if set and no inline repetition expected) -->
+      {resolvedHeroImg && (
+        <div class="mb-8 rounded-2xl overflow-hidden border border-white/50 shadow-md">
+          <img src={resolvedHeroImg} alt={title} class="w-full object-cover max-h-80"
+               onerror="this.parentElement.style.display='none'" />
+        </div>
+      )}
+
+      <!-- Article body -->
+      <div class="glass-panel p-8 md:p-10 mb-8">
+        <div class="prose prose-sm sm:prose max-w-none
+                    prose-headings:text-appleDark prose-headings:font-bold
+                    prose-h2:text-xl prose-h2:mt-10 prose-h2:mb-4
+                    prose-h3:text-lg prose-h3:mt-8 prose-h3:mb-3
+                    prose-p:text-appleDark/85 prose-p:leading-relaxed prose-p:mb-4
+                    prose-a:text-appleBlue prose-a:no-underline hover:prose-a:underline
+                    prose-strong:text-appleDark
+                    prose-code:text-appleBlue prose-code:bg-appleBlue/8 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded prose-code:text-sm prose-code:font-mono prose-code:before:content-none prose-code:after:content-none
+                    prose-pre:bg-appleDark prose-pre:text-white/90 prose-pre:rounded-xl prose-pre:overflow-x-auto
+                    prose-blockquote:border-l-4 prose-blockquote:border-appleBlue/30 prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-appleGray
+                    prose-ul:pl-4 prose-ol:pl-4
+                    prose-li:text-appleDark/85 prose-li:mb-1
+                    prose-img:rounded-xl prose-img:shadow-md prose-img:my-6">
+          <Content />
+        </div>
+      </div>
+
+      <!-- Prev / Next -->
+      {(prevPost || nextPost) && (
+        <nav class="grid grid-cols-2 gap-4 mb-8" aria-label="記事ナビゲーション">
+          <div>
+            {prevPost && (
+              <a href={prevPost.href}
+                 class="flex flex-col glass-panel p-4 hover:-translate-y-0.5 hover:shadow-md transition-all group h-full">
+                <span class="text-xs font-semibold mb-1 flex items-center gap-1.5" style="color:#7c3aed;">
+                  <i class="fa-solid fa-arrow-left text-[10px]"></i>前の記事
+                </span>
+                <span class="text-sm font-medium text-appleDark group-hover:text-appleBlue transition-colors leading-snug line-clamp-2">
+                  {prevPost.title}
+                </span>
+              </a>
+            )}
+          </div>
+          <div>
+            {nextPost && (
+              <a href={nextPost.href}
+                 class="flex flex-col glass-panel p-4 hover:-translate-y-0.5 hover:shadow-md transition-all group text-right h-full">
+                <span class="text-xs font-semibold mb-1 flex items-center justify-end gap-1.5" style="color:#7c3aed;">
+                  次の記事<i class="fa-solid fa-arrow-right text-[10px]"></i>
+                </span>
+                <span class="text-sm font-medium text-appleDark group-hover:text-appleBlue transition-colors leading-snug line-clamp-2">
+                  {nextPost.title}
+                </span>
+              </a>
+            )}
+          </div>
+        </nav>
+      )}
+
+      <!-- Bottom nav (referrer-aware) -->
+      <div class="mt-2">
+        <div id="blog-bottom-nav" data-base={import.meta.env.BASE_URL} class="flex flex-wrap gap-3 justify-center">
+          <a id="btn-back" href={`${import.meta.env.BASE_URL}#blog`}
+             class="inline-flex items-center px-6 py-3 glass-button rounded-full text-sm font-medium text-appleDark hover:text-appleBlue transition-all">
+            <i class="fa-solid fa-chevron-left mr-2 text-xs"></i>もどる
+          </a>
+          <a id="btn-list" href={`${import.meta.env.BASE_URL}blog/`}
+             class="inline-flex items-center px-6 py-3 glass-button rounded-full text-sm font-medium text-appleDark hover:text-appleBlue transition-all">
+            <i class="fa-solid fa-arrow-left mr-2 text-xs"></i>Blog一覧へ
+          </a>
+        </div>
+      </div>
+
+      <script is:inline>
+      (function() {
+        var ref = document.referrer;
+        var btnBack = document.getElementById('btn-back');
+        var btnList = document.getElementById('btn-list');
+        var nav = document.getElementById('blog-bottom-nav');
+        if (!ref || !btnBack || !btnList || !nav) return;
+
+        var path = ref.replace(/^https?:\/\/[^/]+/, '');
+        var baseUrl = nav.dataset.base || '/';
+        var isHomeRef = path === baseUrl || path === baseUrl + 'en/' || path === baseUrl + 'en';
+        var isListRef = path === baseUrl + 'blog/' || path === baseUrl + 'blog';
+
+        var solidStyle = 'background:#1d1d1f;color:#fff;border:none;box-shadow:0 2px 8px rgba(0,0,0,0.15);display:inline-flex;align-items:center;padding:12px 24px;border-radius:9999px;font-size:0.875rem;font-weight:600;text-decoration:none;';
+
+        if (isHomeRef) {
+          // ホームから → 「もどる」を primary、一覧ボタンはそのまま
+          btnBack.classList.remove('glass-button');
+          btnBack.style.cssText = solidStyle + 'color:#fff;';
+        } else if (isListRef) {
+          // 一覧から → 「Blog一覧へ」を primary・左寄せ、「ホームへ」を secondary
+          btnList.classList.remove('glass-button');
+          btnList.style.cssText = solidStyle + 'color:#fff;';
+          nav.prepend(btnList);
+          btnBack.href = baseUrl;
+          btnBack.innerHTML = '<i class="fa-solid fa-house" style="margin-right:8px;font-size:0.75rem;"></i>ホームへ';
+        } else {
+          // 別記事から prev/next 経由など → 「もどる」は「ホームへ」に変更
+          btnBack.href = baseUrl;
+          btnBack.innerHTML = '<i class="fa-solid fa-house" style="margin-right:8px;font-size:0.75rem;"></i>ホームへ';
+        }
+      })();
+      </script>
+
+    </article>
+  </main>
+
+  <Footer socials={jaData.socials} lang="ja" />
+</Layout>
+
+<style is:global>
+  /* Inline images in blog post body */
+  .prose img {
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  }
+</style>

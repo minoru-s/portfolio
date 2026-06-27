@@ -1,0 +1,71 @@
+---
+import '../styles/global.css';
+import Modal from '../components/Modal.astro';
+
+interface Props {
+  title: string;
+  lang?: string;
+  description?: string;
+}
+
+const { title, lang = 'ja', description = "Minoru SAITO's Portfolio — R&D Engineer combining hardware and software" } = Astro.props;
+---
+
+<!doctype html>
+<html lang={lang} class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+    <title>{title} | Minoru SAITO</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-74WFFVCBWE"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      gtag('js', new Date());
+      gtag('config', 'G-74WFFVCBWE');
+    </script>
+  </head>
+
+  <body class="antialiased">
+    <!-- Floating blob background -->
+    <div class="bg-mesh">
+      <div class="blob blob-1"></div>
+      <div class="blob blob-2"></div>
+      <div class="blob blob-3"></div>
+    </div>
+
+    <slot />
+
+    <Modal />
+
+    <!-- Scroll fade-in animation -->
+    <script is:inline>
+      (function() {
+        const sections = document.querySelectorAll('.fade-in-section');
+        const observer = new IntersectionObserver(
+          (entries) => {
+            entries.forEach(entry => {
+              if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+              }
+            });
+          },
+          { threshold: 0.08 }
+        );
+        sections.forEach(section => observer.observe(section));
+      })();
+    </script>
+  </body>
+</html>
