@@ -67,15 +67,6 @@ const navLinks = [
     var menuIcon = btn ? btn.querySelector('i') : null;
 
     function openMenu() {
-      var sbWidth = window.innerWidth - document.documentElement.clientWidth;
-      if (sbWidth > 0) {
-        document.body.style.paddingRight = sbWidth + 'px';
-        var nav = document.getElementById('nav-container');
-        if (nav) {
-          var currentPR = parseFloat(getComputedStyle(nav).paddingRight) || 0;
-          nav.style.paddingRight = (currentPR + sbWidth) + 'px';
-        }
-      }
       document.body.style.overflow = 'hidden';
       menu.classList.remove('hidden');
       menu.classList.add('flex');
@@ -89,9 +80,6 @@ const navLinks = [
       menu.classList.add('hidden');
       menu.classList.remove('flex');
       document.body.style.overflow = '';
-      document.body.style.paddingRight = '';
-      var nav = document.getElementById('nav-container');
-      if (nav) nav.style.paddingRight = '';
       if (menuIcon) {
         menuIcon.className = 'fa-solid fa-bars';
         menuIcon.style.transform = '';

@@ -11,8 +11,9 @@
 
 @layer base {
   html {
-    /* Offset anchor links to clear the fixed nav (~80px) */
     scroll-padding-top: 5.5rem;
+    overflow-x: clip;
+    scrollbar-gutter: stable;
   }
 
   body {
