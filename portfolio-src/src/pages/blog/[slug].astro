@@ -91,27 +91,27 @@ const resolvedHeroImg = heroImg?.startsWith('/') ? `${b}${heroImg.slice(1)}` : h
       {(prevPost || nextPost) && (
         <nav class="grid grid-cols-2 gap-4 mb-8" aria-label="記事ナビゲーション">
           <div>
-            {prevPost && (
-              <a href={prevPost.href}
+            {nextPost && (
+              <a href={nextPost.href}
                  class="flex flex-col glass-panel p-4 hover:-translate-y-0.5 hover:shadow-md transition-all group h-full">
                 <span class="text-xs font-semibold mb-1 flex items-center gap-1.5" style="color:#7c3aed;">
-                  <i class="fa-solid fa-arrow-left text-[10px]"></i>前の記事
+                  <i class="fa-solid fa-arrow-left text-[10px]"></i>次の記事
                 </span>
                 <span class="text-sm font-medium text-appleDark group-hover:text-appleBlue transition-colors leading-snug line-clamp-2">
-                  {prevPost.title}
+                  {nextPost.title}
                 </span>
               </a>
             )}
           </div>
           <div>
-            {nextPost && (
-              <a href={nextPost.href}
+            {prevPost && (
+              <a href={prevPost.href}
                  class="flex flex-col glass-panel p-4 hover:-translate-y-0.5 hover:shadow-md transition-all group text-right h-full">
                 <span class="text-xs font-semibold mb-1 flex items-center justify-end gap-1.5" style="color:#7c3aed;">
-                  次の記事<i class="fa-solid fa-arrow-right text-[10px]"></i>
+                  前の記事<i class="fa-solid fa-arrow-right text-[10px]"></i>
                 </span>
                 <span class="text-sm font-medium text-appleDark group-hover:text-appleBlue transition-colors leading-snug line-clamp-2">
-                  {nextPost.title}
+                  {prevPost.title}
                 </span>
               </a>
             )}
