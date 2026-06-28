@@ -17,9 +17,9 @@
 - GitHub Actions による自動デプロイ（main push → GitHub Pages）
 
 **コンテンツ追加分**
-- Blog セクションを新設
+- Blog セクションを新設（記事3件追加）
 - Projects に3件追加
-- Achievements に2件追加
+- Achievements に3件追加
 
 ## 技術スタック
 

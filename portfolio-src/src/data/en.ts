@@ -1,3 +1,5 @@
+const b = import.meta.env.BASE_URL;
+
 export const profile = {
   name: "Minoru SAITO",
   englishName: "Minoru SAITO",
@@ -149,6 +151,46 @@ export const achievements = [
     date: "May 2025",
     summary: "Selected as one of 3 grant-type scholarship recipients from about 1000 people based on academic and extracurricular activities.",
     details: `<p class="mb-4">In my fourth year at the Faculty of Science and Engineering, Chuo University, I was selected from about 1,000 peers for the Dean of the Faculty of Science and Engineering Award, a grant-type scholarship awarded to only 3 students, based on multifaceted evaluation of my studies and extracurricular activities.</p>`,
+  },
+  {
+    title: "Ministry of Education Award — Volunteer Spirit Award",
+    date: "Dec 2020",
+    summary: "The volunteer initiative 'STARCLE', a free textbook redistribution program started with friends in high school, received the Minister of Education, Culture, Sports, Science and Technology Award at the 24th Prudential Spirit of Community Volunteer Spirit Award. (Group award)",
+    details: `<p class="mb-4">The free textbook redistribution volunteer "STARCLE", which I started with three friends in my second year of high school, received the Minister of Education, Culture, Sports, Science and Technology Award at the 24th Prudential Spirit of Community Volunteer Spirit Award.</p>
+<p class="mb-4">The activity of collecting unused textbooks from all over Japan and delivering them free of charge to students in need was highly evaluated. This was a <strong>group award</strong>. The prize money was used as activity funds to make shipping completely free thereafter.</p>
+<div class="p-4 mt-4 bg-black/5 rounded-lg border border-black/10">
+  <h4 class="font-bold text-appleDark mb-3 text-sm">Related Links</h4>
+  <ul class="space-y-2 text-sm">
+    <li><a href="https://www.gib-life.co.jp/st/about/is_pdf/20201223.pdf" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>Award Recipients List (PDF) — 24th Prudential Spirit of Community</a></li>
+    <li><a href="${b}en/projects/starcle/" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-right mr-2 w-4"></i>STARCLE Project Detail Page</a></li>
+  </ul>
+</div>`,
+  },
+  {
+    title: "Sankoin Hotels Award — VA Activity Support Award",
+    date: "2021",
+    summary: "The free textbook redistribution volunteer 'STARCLE' received the VA Activity Support Award and Sankoin Hotels Award. (Group award)",
+    details: `<p class="mb-4">The free textbook redistribution volunteer "STARCLE" received the VA Activity Support Award and Sankoin Hotels Award. This was a <strong>group award</strong>.</p>
+<div class="p-4 mt-4 bg-black/5 rounded-lg border border-black/10">
+  <h4 class="font-bold text-appleDark mb-3 text-sm">Related Links</h4>
+  <ul class="space-y-2 text-sm">
+    <li><a href="https://lion.or.jp/va/about/summary_2021/award_2021.html" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>Award Recipients List — VA Activity Support Award 2021</a></li>
+    <li><a href="${b}en/projects/starcle/" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-right mr-2 w-4"></i>STARCLE Project Detail Page</a></li>
+  </ul>
+</div>`,
+  },
+  {
+    title: "Reader Contribution Published in Nikkei Newspaper",
+    date: "Nov 2017",
+    summary: "In my 2nd year of middle school, a proposal titled 'A Long Pipe Connecting Dreams' submitted to the Nikkei reader initiative on the future of delivery services was selected and published.",
+    details: `<p class="mb-4">In my 2nd year of middle school, a proposal titled "A Long Pipe Connecting Dreams" was selected and published in the Nikkei Newspaper reader initiative "What functions will be required of delivery services in 2020? (Yamato Holdings President edition)".</p>
+<p class="mb-4">The proposal envisioned a pipe-based parcel delivery system powered by wind and water, aiming to reduce human labor and achieve energy savings as future logistics infrastructure.</p>
+<div class="p-4 mt-4 bg-black/5 rounded-lg border border-black/10">
+  <h4 class="font-bold text-appleDark mb-3 text-sm">Published Article</h4>
+  <ul class="space-y-2 text-sm">
+    <li><a href="https://www.nikkei.com/nkd/industry/article/?c=DNX&df=3&n_m_code=133&ng=DGXZZO23788610S7A121C1000000" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>Nikkei Newspaper (Nov 27, 2017)</a></li>
+  </ul>
+</div>`,
   },
 ];
 

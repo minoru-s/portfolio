@@ -179,6 +179,19 @@ export const achievements = [
   </ul>
 </div>`,
   },
+  {
+    title: "日本経済新聞「未来面」読者寄稿 掲載",
+    date: "2017年11月",
+    summary: "中学2年生の時、日経新聞の読者提案企画「2020年の宅急便に求められる機能は？」に寄稿した提案「夢をつなぐ長い管」が採用・掲載された。",
+    details: `<p class="mb-4">中学2年生の時、日本経済新聞の読者参加企画「2020年の宅急便に求められる機能は何ですか（ヤマトホールディングス社長編）」に寄稿した提案「夢をつなぐ長い管」が採用され、紙面に掲載されました。</p>
+<p class="mb-4">風力・水力を活用したパイプによる荷物輸送システムを提案したもので、人手削減と省エネを両立する未来の物流インフラを構想しました。</p>
+<div class="p-4 mt-4 bg-black/5 rounded-lg border border-black/10">
+  <h4 class="font-bold text-appleDark mb-3 text-sm">掲載記事</h4>
+  <ul class="space-y-2 text-sm">
+    <li><a href="https://www.nikkei.com/nkd/industry/article/?c=DNX&df=3&n_m_code=133&ng=DGXZZO23788610S7A121C1000000" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>日本経済新聞（2017年11月27日付）</a></li>
+  </ul>
+</div>`,
+  },
 ];
 
 export const timeline = [
