@@ -167,7 +167,9 @@
     if (data.date) { dateEl.textContent = data.date; dateEl.style.display = 'block'; }
     else { dateEl.style.display = 'none'; }
 
-    document.getElementById('modal-summary').textContent = data.summary || '';
+    var summaryEl = document.getElementById('modal-summary');
+    summaryEl.textContent = data.summary || '';
+    summaryEl.style.display = data.detailsHtml ? 'none' : '';
 
     var imgWrap = document.getElementById('modal-image-wrap');
     var imgEl  = document.getElementById('modal-image');

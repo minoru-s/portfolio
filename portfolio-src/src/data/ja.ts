@@ -57,6 +57,7 @@ export const skills = [
     items: [
       { name: "Final Cut Pro X", level: 3, note: "動画編集 歴10年" },
       { name: "Adobe Illustrator", level: 2, note: "パンフレット・ポスターなど制作経験あり" },
+      { name: "Adobe Encore", level: 1, note: "DVDオーサリング" },
       { name: "Autodesk Fusion", level: 2, note: "ロボット筐体の3D CAD設計に使用" },
       { name: "Unity", level: 2, note: "ゲーム開発・シミュレーション環境の構築に使用" },
     ],
@@ -181,9 +182,22 @@ export const achievements = [
   },
   {
     title: "日本経済新聞「未来面」読者寄稿 掲載",
+    date: "2019年5月",
+    summary: "高校1年生の時、日経新聞の読者提案企画「食の安全・安定供給のために何が必要か（JA全中会長編）」に寄稿した提案「全く新しい農業法人」が採用・掲載された。",
+    details: `<p class="mb-4">高校1年生の時、日本経済新聞の読者参加企画「食の安全・安定供給のために何が必要か（JA全中・中家徹会長編）」に寄稿した提案「全く新しい農業法人」が採用され、掲載されました。</p>
+<p class="mb-4">日本の食料安全保障と農業の担い手不足という課題に対し、既存の農協・企業の枠を超えた全く新しい形の農業法人モデルを提案したものです。</p>
+<div class="p-4 mt-4 bg-black/5 rounded-lg border border-black/10">
+  <h4 class="font-bold text-appleDark mb-3 text-sm">掲載記事</h4>
+  <ul class="space-y-2 text-sm">
+    <li><a href="https://www.nikkei.com/article/DGXZZO45116950S9A520C1000000/" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>日本経済新聞（2019年5月）</a></li>
+  </ul>
+</div>`,
+  },
+  {
+    title: "日本経済新聞「未来面」読者寄稿 掲載",
     date: "2017年11月",
     summary: "中学2年生の時、日経新聞の読者提案企画「2020年の宅急便に求められる機能は？」に寄稿した提案「夢をつなぐ長い管」が採用・掲載された。",
-    details: `<p class="mb-4">中学2年生の時、日本経済新聞の読者参加企画「2020年の宅急便に求められる機能は何ですか（ヤマトホールディングス社長編）」に寄稿した提案「夢をつなぐ長い管」が採用され、紙面に掲載されました。</p>
+    details: `<p class="mb-4">中学2年生の時、日本経済新聞の読者参加企画「2020年の宅急便に求められる機能は何ですか（ヤマトホールディングス社長編）」に寄稿した提案「夢をつなぐ長い管」が採用され、掲載されました。</p>
 <p class="mb-4">風力・水力を活用したパイプによる荷物輸送システムを提案したもので、人手削減と省エネを両立する未来の物流インフラを構想しました。</p>
 <div class="p-4 mt-4 bg-black/5 rounded-lg border border-black/10">
   <h4 class="font-bold text-appleDark mb-3 text-sm">掲載記事</h4>

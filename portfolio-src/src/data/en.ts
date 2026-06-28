@@ -57,6 +57,7 @@ export const skills = [
     items: [
       { name: "Final Cut Pro X", level: 3, note: "Video Editing (10 years)" },
       { name: "Adobe Illustrator", level: 2, note: "Created pamphlets, posters, and print materials" },
+      { name: "Adobe Encore", level: 1, note: "DVD authoring" },
       { name: "Autodesk Fusion", level: 2, note: "Used for 3D CAD design of robot chassis" },
       { name: "Unity", level: 2, note: "Used for game development & simulation environments" },
     ],
@@ -176,6 +177,19 @@ export const achievements = [
   <ul class="space-y-2 text-sm">
     <li><a href="https://lion.or.jp/va/about/summary_2021/award_2021.html" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>Award Recipients List — VA Activity Support Award 2021</a></li>
     <li><a href="${b}en/projects/starcle/" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-right mr-2 w-4"></i>STARCLE Project Detail Page</a></li>
+  </ul>
+</div>`,
+  },
+  {
+    title: "Reader Contribution Published in Nikkei Newspaper",
+    date: "May 2019",
+    summary: "In my 1st year of high school, a proposal titled 'A Completely New Agricultural Corporation' submitted to the Nikkei reader initiative on food security was selected and published.",
+    details: `<p class="mb-4">In my 1st year of high school, a proposal titled "A Completely New Agricultural Corporation" was selected and published in the Nikkei Newspaper reader initiative "What is needed for safe and stable food supply? (JA Zencchu Chairman edition)".</p>
+<p class="mb-4">The proposal envisioned a completely new model of agricultural corporation that transcends the boundaries of existing agricultural cooperatives and corporations, addressing Japan's food security challenges and the shortage of agricultural workers.</p>
+<div class="p-4 mt-4 bg-black/5 rounded-lg border border-black/10">
+  <h4 class="font-bold text-appleDark mb-3 text-sm">Published Article</h4>
+  <ul class="space-y-2 text-sm">
+    <li><a href="https://www.nikkei.com/article/DGXZZO45116950S9A520C1000000/" target="_blank" rel="noopener noreferrer" class="text-appleBlue hover:underline flex items-center"><i class="fa-solid fa-arrow-up-right-from-square mr-2 w-4"></i>Nikkei Newspaper (May 2019)</a></li>
   </ul>
 </div>`,
   },
