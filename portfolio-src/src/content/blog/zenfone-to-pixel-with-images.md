@@ -15,7 +15,7 @@ draft: false
 
 そういうところが好きだった。
 
-![これまで使ってきた歴代Zenfone](/img/blog/zenfone-history.jpg)
+![これまで使ってきた歴代Zenfone](/portfolio/img/blog/zenfone-history.jpg)
 
 ## 1回目の突然死
 
@@ -27,7 +27,7 @@ draft: false
 
 それでも、心のどこかでは「まあ、たまたまだろう」と思っていた。
 
-![Zenfone 8とZenfone 11 Ultra](/img/blog/zenfone-8-and-11-ultra.jpg)
+![Zenfone 8とZenfone 11 Ultra](/portfolio/img/blog/zenfone-8-and-11-ultra.jpg)
 
 ## 2回目の突然死
 
