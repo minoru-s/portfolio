@@ -74,6 +74,8 @@ Zenfoneの品質が低いと断言したいわけではない。自分の個体�
 
 次の機種を選ぶにあたって、最後まで悩んだのはREDMAGICとGoogle Pixel 10シリーズだった。
 
+![比較して悩んだスマホ候補](/portfolio/img/blog/phone-candidates.jpg)
+
 REDMAGICは、自分が好きだった“尖ったスマホ”にかなり近かった。高性能で、構成も面白く、イヤホンジャックもある。スペック表を見ているだけなら、かなり魅力的だった。
 
 正直、本当はREDMAGICが欲しかった。
@@ -92,7 +94,6 @@ REDMAGICは、自分が好きだった“尖ったスマホ”にかなり近か
 
 でも今回は、イヤホンジャックよりもカメラとサポートを優先することにした。
 
-![比較して悩んだスマホ候補](/portfolio/img/blog/phone-candidates.jpg)
 
 ## Pixel 10 Proを選んだ
 
