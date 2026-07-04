@@ -92,7 +92,7 @@ REDMAGICは、自分が好きだった“尖ったスマホ”にかなり近か
 
 でも今回は、イヤホンジャックよりもカメラとサポートを優先することにした。
 
-![比較して悩んだスマホ候補](/img/blog/phone-candidates.jpg)
+![比較して悩んだスマホ候補](/portfolio/img/blog/phone-candidates.jpg)
 
 ## Pixel 10 Proを選んだ
 
@@ -106,7 +106,7 @@ REDMAGICは、自分が好きだった“尖ったスマホ”にかなり近か
 
 10年間Zenfoneを使ってきて、ようやくスマホ選びの基準が少し変わったのかもしれない。
 
-![新しく購入したGoogle Pixel 10 Pro](/img/blog/pixel-10-pro.jpg)
+![新しく購入したGoogle Pixel 10 Pro](/portfolio/img/blog/pixel-10-pro.jpg)
 
 ## ありがとう、Zenfone
 
