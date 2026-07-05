@@ -213,7 +213,7 @@ export const timeline = [
     year: "Apr 2016 - Mar 2022",
     title: "Kaiyo Academy",
     subtitle: "",
-    description: "A boarding middle and high school located in Gamagori City, Aichi Prefecture. Joined the video club, producing many official recording videos and event movies. Also designed school festival pamphlets and student council magazines. Started learning HTML and CSS through self-study during this period.",
+    description: "A boarding middle and high school located in Gamagori City, Aichi Prefecture. Joined the video club, producing many official recording videos and event movies. Also designed school festival pamphlets and student council magazines. In the 4th and 5th years (equiv. to high school years 1–2), served as Video Club President, leading the club's activities, while also serving two consecutive terms as Student Council Executive Officer, contributing ideas and technical support. In the 4th year, held the dormitory floor leader role multiple times, coordinating daily life and planning social events for floor members. Received the Honor Students award multiple times, recognized for excellence in academics and conduct. Started learning HTML and CSS through self-study during this period.",
   },
   {
     year: "Apr 2022 - Mar 2026",
